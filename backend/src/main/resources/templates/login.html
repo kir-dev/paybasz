@@ -1,0 +1,66 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head" th:remove="body">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>paybasz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
+    <link rel="icon" href="favicon.ico">
+
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <link href="/custom-style.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="app-container app-theme-white body-tabs-shadow">
+        <div class="app-container">
+            <div class="h-100 bg-focus bg-animation">
+                <div class="d-flex h-100 justify-content-center align-items-center">
+                    <div class="mx-auto app-login-box col-md-8">
+                        <div class="mx-auto mb-3" style="text-align: center">
+                            <img src="/images/logo_paybasz_home.png" height="128" alt="paybasz"/>
+                        </div>
+                        <div class="modal-dialog w-100 mx-auto">
+                            <div class="modal-content">
+                                <form class="" th:action="@{/login}" method="post">
+                                    <div class="modal-body">
+                                        <div class="h5 modal-title text-center">
+                                            <h4 class="mt-2">
+                                                <div>Na csumm!</div>
+                                                <span>Írjad be szépen a krendetiálszt vagy nem kapsz mazsolát</span>
+                                                <p th:if="${loginError}" class="text-danger mt-3">Itt valami gebasz van!</p>
+                                            </h4>
+                                        </div>
+
+                                            <div class="form-row">
+                                                <div class="col-md-12">
+                                                    <div class="position-relative form-group"><input name="username" id="username" placeholder="Felhasználónév" type="text" class="form-control" autofocus="autofocus"></div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="position-relative form-group"><input name="password" id="password" placeholder="Jelszó" type="password" class="form-control"></div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                    <div class="modal-footer clearfix">
+                                        <div class="float-left"><a onclick="alert('szopó');" class="btn-lg btn btn-link">Hát én ezt nem tudom!</a></div>
+                                        <div class="float-right">
+                                            <button class="btn btn-success btn-lg">NA ZSA!</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="text-center text-white opacity-8 mt-3">pay<span class="text-success">basz</span> | <span class="text-secondary">Nyugtával dícsérjük a navot</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

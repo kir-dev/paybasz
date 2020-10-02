@@ -1,0 +1,85 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head" th:remove="body">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>paybasz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
+    <link rel="icon" href="favicon.ico">
+
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <link href="/custom-style.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-container app-theme-gray">
+    <div class="app-main">
+        <div th:replace="layout :: menu('upload')"></div>
+
+        <div class="app-main__outer">
+            <div class="app-main__inner">
+                <div th:replace="layout :: menuMobile"></div>
+                <div class="app-header mt-lg-5">
+                    <div class="page-title-heading">
+                        <span class="material-icons fix-material-icons">publish</span> Egyenleg feltöltése
+                        <div class="page-title-subheading">
+                            Itt adhatsz pénz felhasználóhoz. A feltöltésről tranzakció készül, így utólag visszakereshető.
+                        </div>
+                    </div>
+                    <div class="app-header-right">
+
+                    </div>
+                    <div class="app-header-overlay d-none animated fadeIn"></div>
+                </div>
+                <div class="app-inner-layout app-inner-layout-page">
+
+                    <div class="app-inner-layout__wrapper">
+                        <div class="app-inner-layout__content">
+                            <div class="tab-content">
+                                <div class="container-fluid">
+
+                                    <div class="row">
+                                        <div class="col-sm-12 col-lg-6">
+                                            <div class="mb-3 card">
+                                                <div class="card-header-tab card-header">
+                                                    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                                                        <span class="material-icons icon-gradient bg-night-fade">publish</span>
+                                                        EGYENLEG FELTÖLTÉSE
+                                                    </div>
+                                                </div>
+                                                <div class="card-body">
+                                                    <form class="" th:action="@{/admin/upload-money}" method="post">
+                                                        <input type="hidden" name="id" th:value="${id}" />
+                                                        <div class="position-relative form-group"><label for="name" class="">Név</label><input disabled name="name" id="name" placeholder="" type="text" class="form-control" autocomplete="off" spellcheck="false" th:value="${name}"></div>
+                                                        <div class="position-relative form-group"><label for="money" class="">Feltöltendő összeg</label>
+                                                            <div class="input-group">
+                                                                <input name="money" id="money" placeholder="" type="number" class="form-control" min="1" step="1" value="2000" autocomplete="off" spellcheck="false">
+                                                                <div class="input-group-append"><span class="input-group-text bg-light">JMF</span></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <input type="submit" class="mt-1 btn btn-alternate" value="KÖNYVEL" />
+                                                        <a th:href="@{/admin/accounts}" class="mt-1 ml-1 btn btn-outline-light">VISSZA</a>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="app-drawer-overlay d-none animated fadeIn"></div>
+<object th:replace="layout :: scripts"></object>
+</body>
+</html>

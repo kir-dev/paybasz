@@ -1,0 +1,163 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head" th:remove="body">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>paybasz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
+    <link rel="icon" href="favicon.ico">
+
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <link href="/custom-style.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-container app-theme-gray">
+    <div class="app-main">
+        <div th:replace="layout :: menu('export')"></div>
+
+        <div class="app-main__outer">
+            <div class="app-main__inner">
+                <div th:replace="layout :: menuMobile"></div>
+                <div class="app-header mt-lg-5">
+                    <div class="page-title-heading">
+                        <span class="material-icons fix-material-icons">save</span> Exportálás
+                        <div class="page-title-subheading">
+                            Itt kimentheted az adatokat CSV-be, amit aztán betölthatsz excelbe vagy elrakhatod biztonsági mentésnek. Készíthetsz adatbázis exportot is.
+                            Ha H2-t használsz, akkor csak akkor ha le van állítva. Egyéb relációs adatbázist, akkor futás közben is akár.
+                        </div>
+                    </div>
+                    <div class="app-header-right">
+                    </div>
+                    <div class="app-header-overlay d-none animated fadeIn"></div>
+                </div>
+                <div class="app-inner-layout app-inner-layout-page">
+                    <div class="app-inner-layout__wrapper">
+                        <div class="app-inner-layout__content">
+                            <div class="tab-content">
+                                <div class="tab-pane tabs-animation fade show active" id="tab-content-0" role="tabpanel">
+                                    <div class="container-fluid">
+                                        <div class="row">
+
+                                            <div class="col-md-12 col-lg-6 col-xl-4">
+                                                <div class="card-shadow-primary card-border mb-3 card">
+                                                    <div class="dropdown-menu-header">
+                                                        <div class="dropdown-menu-header-inner bg-plum-plate">
+                                                            <div class="menu-header-content">
+                                                                <div>
+                                                                    <h5 class="menu-header-title">FELHASZNÁLÓK</h5>
+                                                                    <h6 class="menu-header-subtitle">exportálása</h6>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="p-3">
+                                                        <h6 class="text-muted text-uppercase font-size-md opacity-5 font-weight-normal">FORMÁTUMOK</h6>
+                                                        <ul class="rm-list-borders list-group list-group-flush">
+                                                            <li class="list-group-item">
+                                                                <div class="widget-content p-0">
+                                                                    <div class="widget-content-wrapper">
+                                                                        <div class="widget-content-left">
+                                                                            <div class="widget-subheading">CSV</div>
+                                                                        </div>
+                                                                        <div class="widget-content-right">
+                                                                            <div class="font-size-xlg text-muted">
+                                                                                <a th:href="@{/admin/export/accounts}" target="_blank" class="btn btn-secondary">EXPORT</a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12 col-lg-6 col-xl-4">
+                                                <div class="card-shadow-primary card-border mb-3 card">
+                                                    <div class="dropdown-menu-header">
+                                                        <div class="dropdown-menu-header-inner bg-malibu-beach">
+                                                            <div class="menu-header-content">
+                                                                <div>
+                                                                    <h5 class="menu-header-title">TRANZAKCIÓK</h5>
+                                                                    <h6 class="menu-header-subtitle">exportálása</h6>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="p-3">
+                                                        <h6 class="text-muted text-uppercase font-size-md opacity-5 font-weight-normal">FORMÁTUMOK</h6>
+                                                        <ul class="rm-list-borders list-group list-group-flush">
+                                                            <li class="list-group-item">
+                                                                <div class="widget-content p-0">
+                                                                    <div class="widget-content-wrapper">
+                                                                        <div class="widget-content-left">
+                                                                            <div class="widget-subheading">CSV</div>
+                                                                        </div>
+                                                                        <div class="widget-content-right">
+                                                                            <div class="font-size-xlg text-muted">
+                                                                                <a th:href="@{/admin/export/transactions}" target="_blank" class="btn btn-secondary">EXPORT</a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12 col-lg-6 col-xl-4">
+                                                <div class="card-shadow-primary card-border mb-3 card">
+                                                    <div class="dropdown-menu-header">
+                                                        <div class="dropdown-menu-header-inner bg-night-sky">
+                                                            <div class="menu-header-content">
+                                                                <div>
+                                                                    <h5 class="menu-header-title">ESEMÉNYNAPLÓ</h5>
+                                                                    <h6 class="menu-header-subtitle">exportálása</h6>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="p-3">
+                                                        <h6 class="text-muted text-uppercase font-size-md opacity-5 font-weight-normal">FORMÁTUMOK</h6>
+                                                        <ul class="rm-list-borders list-group list-group-flush">
+                                                            <li class="list-group-item">
+                                                                <div class="widget-content p-0">
+                                                                    <div class="widget-content-wrapper">
+                                                                        <div class="widget-content-left">
+                                                                            <div class="widget-subheading">CSV</div>
+                                                                        </div>
+                                                                        <div class="widget-content-right">
+                                                                            <div class="font-size-xlg text-muted">
+                                                                                <a th:href="@{/admin/export/logs}" target="_blank" class="btn btn-secondary">EXPORT</a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="app-drawer-overlay d-none animated fadeIn"></div>
+<script type="text/javascript" src="/assets.js"></script>
+</body>
+</html>
+

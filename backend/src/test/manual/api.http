@@ -1,0 +1,13 @@
+PUT http://localhost:8080/api/balance
+Content-Type: application/json
+
+{"card": "5166a5337e40c9e24efc54ed4b7f0ee3d0020d82", "gatewayName": "devTerminal", "gatewayCode": "8cb2237d0679ca88db6464eac60da96345513964"}
+
+###
+
+PUT http://localhost:8080/api/balance/proto1
+Content-Type: application/json
+
+{"card": "9917280337AE7EA4EAEE161FADB0DD8625286D4F4B8B193F4855F8F8144D0CBA", "gatewayCode": "0581e7b46cfcb0512099eec1095aaa5648ff0812aa6b3d4a66c772b51d8b8ce8"}
+
+###

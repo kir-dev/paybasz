@@ -1,0 +1,9 @@
+output/
+lib/
+clipboard/
+cmake/
+cmake-build-debug/
+.idea/
+src/Firmare.gen.h
+clipboard/
+docs/notes.txt

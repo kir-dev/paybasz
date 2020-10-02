@@ -1,0 +1,49 @@
+
+.paybasz-logo-src {
+    text-align: center;
+    width: 100%;
+}
+
+.paybasz-logo-src-mobile {
+    opacity: 0.8;
+}
+
+.paybasz-logo-src img,
+.paybasz-logo-src span,
+.paybasz-logo-src-mobile span {
+    vertical-align: top;
+    display: inline-block;
+    font-size: 36px;
+}
+
+.small-icons {
+    font-size: 18px;
+}
+
+.icon-wrapper span {
+    font-size: 36px;
+    top: 4px;
+    position: relative;
+}
+
+.card-header-title span.material-icons {
+    margin-right: 20px;
+}
+
+.btn-pill span {
+    vertical-align: middle;
+}
+
+.vertical-timeline-element-content span,
+.vertical-timeline-element-content h4 {
+    display: inline-block;
+    vertical-align: top;
+}
+.vertical-timeline-element-content span {
+    margin: 0 8px 0 0;
+}
+
+.fix-material-icons {
+    position: relative;
+    top: 4px;
+}

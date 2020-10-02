@@ -1,0 +1,84 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head" th:remove="body">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>paybasz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
+    <link rel="icon" href="favicon.ico">
+
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <link href="/custom-style.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-container app-theme-gray">
+    <div class="app-main">
+        <div th:replace="layout :: menu('transactions')"></div>
+
+        <div class="app-main__outer">
+            <div class="app-main__inner">
+                <div th:replace="layout :: menuMobile"></div>
+                <div class="app-header mt-lg-5">
+                    <div class="page-title-heading">
+                        <span class="material-icons fix-material-icons">payment</span> Tranzakciók
+                        <div class="page-title-subheading">
+                            Megtekintheted az összes lezajlott tranzakciót
+                        </div>
+                    </div>
+                </div>
+                <div class="app-inner-layout app-inner-layout-page">
+
+                    <div class="app-inner-layout__wrapper">
+                        <div class="app-inner-layout__content">
+                            <div class="tab-content">
+                                <div class="container-fluid">
+                                    <div class="card mb-3">
+                                        <div class="card-header-tab card-header">
+                                            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                                                <span class="material-icons header-icon icon-gradient bg-malibu-beach">payment</span>
+                                                TRANZAKCIÓK
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <table style="width: 100%;" id="example"
+                                                   class="table table-hover table-striped table-bordered">
+                                                <thead>
+                                                <tr>
+                                                    <th>Idő</th>
+                                                    <th>Fizető</th>
+                                                    <th>Összeg</th>
+                                                    <th>Kedvezményezett</th>
+                                                    <th>Terminál</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr th:each="tx : ${transactions}">
+                                                    <td th:text="${tx.formattedTime()}">2020-00-00 10:00:00</td>
+                                                    <td th:text="${tx.getCardHolder()}">Kiss Pista</td>
+                                                    <td th:text="|${tx.getAmount()} JMF|">1500 JMF</td>
+                                                    <td th:unless="${tx.isRegular()}" th:text="${tx.getReceiver()}">SYSTEM</td>
+                                                    <td th:if="${tx.isRegular()}">SYSTEM</td>
+                                                    <td th:text="${tx.getGateway()}">DevTerminal</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="app-drawer-overlay d-none animated fadeIn"></div>
+<object th:replace="layout :: scripts"></object>
+</body>
+</html>

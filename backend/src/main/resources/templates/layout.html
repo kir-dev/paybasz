@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<object th:remove="tag" th:fragment="head">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>paybasz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
+    <meta name="msapplication-tap-highlight" content="no">
+    <link th:href="@{/material-icons.css}" rel="stylesheet">
+    <link th:href="@{/style.css}" rel="stylesheet">
+    <link th:href="@{/custom-style.css}" rel="stylesheet">
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+</head>
+</object>
+
+<object th:remove="tag" th:fragment="menu (active)">
+    <div class="app-sidebar-wrapper">
+        <div class="app-sidebar sidebar-shadow">
+            <div class="app-header__logo">
+                <a data-placement="bottom" title="paybasz" class="paybasz-logo-src"><span class="material-icons">contactless</span><img src="/images/logo_paybasz.png" height="42" alt="paybasz" /></a>
+            </div>
+            <div class="scrollbar-sidebar">
+                <div class="app-sidebar__inner">
+                    <ul class="vertical-nav-menu">
+                        <li class="mm-active">
+                            <a href="#">
+                                Adminisztráció
+                            </a>
+                            <ul class="mm-show">
+                                <li><a th:class="${active == 'analytics' ? 'mm-active' : ''}" th:href="@{/admin/}">Analitika</a></li>
+                                <li><a th:class="${active == 'accounts' ? 'mm-active' : ''}" th:href="@{/admin/accounts}">Felhasználók</a></li>
+                                <li><a th:class="${active == 'transactions' ? 'mm-active' : ''}" th:href="@{/admin/transactions}">Tranzakciók</a></li>
+                                <li><a th:class="${active == 'export' ? 'mm-active' : ''}" th:href="@{/admin/export}">Exportálás</a></li>
+                                <li><a th:class="${active == 'gateways' ? 'mm-active' : ''}" th:href="@{/admin/gateways}">Terminálok</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="mm-active">
+                            <a href="#">
+                                Felhasználó
+                            </a>
+                            <ul class="mm-show">
+                                <li><a  th:href="@{/logout}">Kijelentkezés</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="app-sidebar-overlay d-none animated fadeIn"></div>
+</object>
+
+<object th:remove="tag" th:fragment="menuMobile">
+    <div class="header-mobile-wrapper">
+        <div class="app-header__logo">
+            <a href="#" data-placement="bottom" title="paybasz" class="paybasz-logo-src-mobile"><span class="material-icons text-light">contactless</span><img src="/images/logo_paybasz_mono.png" height="42" alt="paybasz" /></a>
+            <button type="button" class="hamburger hamburger--elastic mobile-toggle-sidebar-nav">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
+                </span>
+            </button>
+        </div>
+    </div>
+</object>
+
+<object th:remove="tag" th:fragment="scripts">
+<script type="text/javascript" src="/assets.js"></script>
+</object>
+
+</html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head" th:remove="body">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>paybasz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
+    <link rel="icon" href="favicon.ico">
+
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <link href="/custom-style.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-container app-theme-gray">
+    <div class="app-main">
+        <div th:replace="layout :: menu('manual')"></div>
+
+        <div class="app-main__outer">
+            <div class="app-main__inner">
+                <div th:replace="layout :: menuMobile"></div>
+                <div class="app-header mt-lg-5">
+                    <div class="page-title-heading">
+                        <span class="material-icons fix-material-icons">shopping_cart</span> Manulis fizetés
+                        <div class="page-title-subheading"></div>
+                    </div>
+                    <div class="app-header-right">
+
+                    </div>
+                    <div class="app-header-overlay d-none animated fadeIn"></div>
+                </div>
+                <div class="app-inner-layout app-inner-layout-page">
+
+                    <div class="app-inner-layout__wrapper">
+                        <div class="app-inner-layout__content">
+                            <div class="tab-content">
+                                <div class="container-fluid">
+
+                                    <div class="row">
+                                        <div class="col-sm-12 col-lg-12">
+                                            <div class="mb-3 card">
+                                                <div class="card-header-tab card-header">
+                                                    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                                                        <span class="material-icons icon-gradient bg-amy-crisp">shopping_cart</span>
+                                                        MANUÁLIS FIZETÉS
+                                                    </div>
+                                                </div>
+                                                <div class="scroll-area-lg">
+                                                    <div id="step-322" class="tab-pane step-content" style="display: block;">
+                                                        <div class="no-results mt-5">
+                                                            <div class="swal2-icon swal2-success swal2-animate-success-icon">
+                                                                <div class="swal2-success-circular-line-left" style="background-color: rgb(255, 255, 255);"></div>
+                                                                <span class="swal2-success-line-tip"></span>
+                                                                <span class="swal2-success-line-long"></span>
+                                                                <div class="swal2-success-ring"></div>
+                                                                <div class="swal2-success-fix" style="background-color: rgb(255, 255, 255);"></div>
+                                                                <div class="swal2-success-circular-line-right" style="background-color: rgb(255, 255, 255);"></div>
+                                                            </div>
+                                                            <div class="results-subtitle mt-4">FIZETÉS MEGTÖRTÉNT</div>
+                                                            <div class="results-title"><span class="badge badge-success" th:text="|${money} JMF|">850 JMF</span> kifizetve</div>
+                                                            <div class="mt-3 mb-3"></div>
+                                                            <div class="text-center mt-lg-4">
+                                                                <a class="btn-shadow btn-wide btn btn-success btn-lg" href="/admin/accounts">
+                                                                    VISSZA A FELHASZNÁLÓKHOZ
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="app-drawer-overlay d-none animated fadeIn"></div>
+<object th:replace="layout :: scripts"></object>
+</body>
+</html>

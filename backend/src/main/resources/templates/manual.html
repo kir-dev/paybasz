@@ -1,0 +1,89 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head" th:remove="body">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>paybasz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
+    <link rel="icon" href="favicon.ico">
+
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <link href="/custom-style.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-container app-theme-gray">
+    <div class="app-main">
+        <div th:replace="layout :: menu('manual')"></div>
+
+        <div class="app-main__outer">
+            <div class="app-main__inner">
+                <div th:replace="layout :: menuMobile"></div>
+                <div class="app-header mt-lg-5">
+                    <div class="page-title-heading">
+                        <span class="material-icons fix-material-icons">shopping_cart</span> Manulis fizetés
+                        <div class="page-title-subheading">
+                            Fizetés a webes terminálon keresztül.
+                        </div>
+                    </div>
+                    <div class="app-header-right">
+
+                    </div>
+                    <div class="app-header-overlay d-none animated fadeIn"></div>
+                </div>
+                <div class="app-inner-layout app-inner-layout-page">
+
+                    <div class="app-inner-layout__wrapper">
+                        <div class="app-inner-layout__content">
+                            <div class="tab-content">
+                                <div class="container-fluid">
+
+                                    <div class="row">
+                                        <div class="col-sm-12 col-lg-6">
+                                            <div class="mb-3 card">
+                                                <div class="card-header-tab card-header">
+                                                    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                                                        <span class="material-icons icon-gradient bg-sunny-morning">shopping_cart</span>
+                                                        MANUÁLIS FIZETÉS
+                                                    </div>
+                                                </div>
+                                                <div class="card-body">
+                                                    <form class="" th:action="@{/admin/manual-transaction}" method="post">
+                                                        <input type="hidden" name="id" th:value="${id}" />
+                                                        <div class="position-relative form-group"><label for="name" class="">Név</label><input disabled name="name" id="name" placeholder="" type="text" class="form-control" autocomplete="off" spellcheck="false" th:value="${name}"></div>
+                                                        <div class="position-relative form-group"><label for="money" class="">Fizetendő összeg</label>
+                                                            <div class="input-group">
+                                                                <input name="money" id="money" placeholder="" type="number" class="form-control" min="0" th:max="${max}" step="1" value="0" autocomplete="off" spellcheck="false">
+                                                                <div class="input-group-append"><span class="input-group-text bg-light">JMF</span></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <span class="form-text text-muted mt-4 mb-4">
+                                                            <span class="text-success" th:text="${name}"></span> számláján <span class="badge badge-success" th:text="|${balance} JMF|">3000 JMF</span> van, és a hitelkerete <span class="badge badge-success" th:text="|${loan} JMF|">500 JMF</span>, tehát maximum <span class="badge badge-success" th:text="|${max} JMF|">500 JMF</span> fizetése lehetséges
+                                                        </span>
+
+                                                        <input type="submit" class="mt-1 btn btn-warning" value="FIZETÉS" />
+                                                        <a th:href="@{/admin/accounts}" class="mt-1 ml-1 btn btn-outline-light">VISSZA</a>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="app-drawer-overlay d-none animated fadeIn"></div>
+<object th:replace="layout :: scripts"></object>
+</body>
+</html>

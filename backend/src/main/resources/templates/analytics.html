@@ -1,0 +1,226 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head" th:remove="body">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>paybasz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
+    <link rel="icon" href="favicon.ico">
+
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <link href="/custom-style.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-container app-theme-gray">
+    <div class="app-main">
+        <div th:replace="layout :: menu('analytics')"></div>
+
+        <div class="app-main__outer">
+            <div class="app-main__inner">
+                <div th:replace="layout :: menuMobile"></div>
+                <div class="app-header mt-lg-5">
+                    <div class="page-title-heading">
+                        <span class="material-icons fix-material-icons">insert_chart</span> Analitika
+                        <div class="page-title-subheading">
+                            Itt az aktuális statisztikai mutatókot láthatod.
+                        </div>
+                    </div>
+                    <div class="app-header-right">
+
+                    </div>
+                    <div class="app-header-overlay d-none animated fadeIn"></div>
+                </div>
+                <div class="app-inner-layout app-inner-layout-page">
+
+                    <div class="app-inner-layout__wrapper">
+                        <div class="app-inner-layout__content">
+                            <div class="tab-content">
+                                <div class="container-fluid">
+                                    <div class="mb-3 card">
+                                        <div class="card-header-tab card-header">
+                                            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                                                <span class="material-icons header-icon icon-gradient bg-happy-green">show_chart</span>
+                                                STÁTUSZ
+                                            </div>
+                                        </div>
+                                        <div class="no-gutters row">
+                                            <div class="col-sm-6 col-md-4 col-xl-4">
+                                                <div class="card no-shadow rm-border bg-transparent widget-chart text-left">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg opacity-10 bg-warning"></div>
+                                                        <i><span class="material-icons text-dark opacity-8">how_to_reg</span></i>
+                                                    </div>
+                                                    <div class="widget-chart-content">
+                                                        <div class="widget-subheading">FELHASZNÁLÓK</div>
+                                                        <div class="widget-numbers" th:text="${userCount}">35</div>
+                                                        <div class="widget-description opacity-8 text-focus">
+                                                            darab
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="divider m-0 d-md-none d-sm-block"></div>
+                                            </div>
+                                            <div class="col-sm-6 col-md-4 col-xl-4">
+                                                <div class="card no-shadow rm-border bg-transparent widget-chart text-left">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg opacity-9 bg-danger"></div>
+                                                        <i><span class="material-icons text-white">payment</span></i>
+                                                    </div>
+                                                    <div class="widget-chart-content">
+                                                        <div class="widget-subheading">TRANZAKCIÓK</div>
+                                                        <div class="widget-numbers"><span th:text="${txCount}">237</span></div>
+                                                        <div class="widget-description opacity-8 text-focus">
+                                                            darab
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="divider m-0 d-md-none d-sm-block"></div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-4 col-xl-4">
+                                                <div class="card no-shadow rm-border bg-transparent widget-chart text-left">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg opacity-9 bg-success"></div>
+                                                        <i><span class="material-icons text-white">local_atm</span></i>
+                                                    </div>
+                                                    <div class="widget-chart-content">
+                                                        <div class="widget-subheading">BEVTÉTEL</div>
+                                                        <div class="widget-numbers text-success"><span th:text="${sumOfIncome}">219&nbsp;850</span></div>
+                                                        <div class="widget-description text-focus">
+                                                            JMF
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center d-block p-3 card-footer">
+                                            <a class="btn-pill btn-wide fsize-1 btn btn-primary" th:href="@{/admin/create-account}">
+                                                <span class="mr-2 opacity-7">
+                                                    <i class="icon"><span class="material-icons">person_add</span></i>
+                                                </span>
+                                                <span class="mr-1">Felhasználó Regisztrálása</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-lg-12">
+                                            <div class="mb-3 card">
+                                                <div class="card-header-tab card-header">
+                                                    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                                                        <span class="material-icons icon-gradient bg-amy-crisp">receipt_long</span>
+                                                        ESEMÉNY NAPLÓ
+                                                    </div>
+                                                </div>
+                                                <div class="scroll-area-lg">
+                                                    <div class="scrollbar-container">
+                                                        <div class="p-4">
+                                                            <div class="vertical-time-simple vertical-without-time vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+
+                                                                <div th:each="log : ${logs}" th:class="|vertical-timeline-item dot-${log.getColor()} vertical-timeline-element|">
+                                                                    <div>
+                                                                        <span class="vertical-timeline-element-icon bounce-in"></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in">
+                                                                            <span class="text-secondary" th:utext="${log.getFormattedDate()}">2020-11-04&nbsp;10:34:14</span>
+                                                                            <h4 class="timeline-title" th:utext="${log.getFormattedMessage()}">Üzenet</h4>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-xl-3">
+                                            <div class="card mb-3 widget-chart widget-chart2 text-left card-btm-border card-shadow-success border-success">
+                                                <div class="widget-chat-wrapper-outer">
+                                                    <div class="widget-chart-content pt-3 pl-3 pb-1">
+                                                        <div class="widget-chart-flex">
+                                                            <div class="widget-numbers">
+                                                                <div class="widget-chart-flex">
+                                                                    <div class="fsize-4">
+                                                                        <small class="opacity-5"><span class="material-icons">local_atm</span></small>
+                                                                        <span th:text="${sumOfIncome}">237&nbsp;850</span></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <h6 class="widget-subheading mb-0 opacity-5">JMF | összes bevétel</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-xl-3">
+                                            <div class="card mb-3 widget-chart widget-chart2 text-left card-btm-border card-shadow-primary border-info">
+                                                <div class="widget-chat-wrapper-outer">
+                                                    <div class="widget-chart-content pt-3 pl-3 pb-1">
+                                                        <div class="widget-chart-flex">
+                                                            <div class="widget-numbers">
+                                                                <div class="widget-chart-flex">
+                                                                    <div class="fsize-4">
+                                                                        <small class="opacity-5"><span class="material-icons">local_atm</span></small>
+                                                                        <span th:text="${sumOfLoans}">24&nbsp;500</span></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <h6 class="widget-subheading mb-0 opacity-5">JMF | hitelezett tranzakció</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-xl-3">
+                                            <div class="card mb-3 widget-chart widget-chart2 text-left card-btm-border card-shadow-warning border-warning">
+                                                <div class="widget-chat-wrapper-outer">
+                                                    <div class="widget-chart-content pt-3 pl-3 pb-1">
+                                                        <div class="widget-chart-flex">
+                                                            <div class="widget-numbers">
+                                                                <div class="widget-chart-flex">
+                                                                    <div class="fsize-4">
+                                                                        <small class="opacity-5"><span class="material-icons">local_atm</span></small>
+                                                                        <span th:text="${sumOfBalances}">407&nbsp;080</span></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <h6 class="widget-subheading mb-0 opacity-5">JMF | az összes számlán</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-xl-3">
+                                            <div class="card mb-3 widget-chart widget-chart2 text-left card-btm-border card-shadow-danger border-danger">
+                                                <div class="widget-chat-wrapper-outer">
+                                                    <div class="widget-chart-content pt-3 pl-3 pb-1">
+                                                        <div class="widget-chart-flex">
+                                                            <div class="widget-numbers">
+                                                                <div class="widget-chart-flex">
+                                                                    <div class="fsize-4">
+                                                                        <small class="opacity-5"><span class="material-icons">local_atm</span></small>
+                                                                        <span th:text="${sumOfPayIns}">307&nbsp;800</span></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <h6 class="widget-subheading mb-0 opacity-5">JMF | befizetések összege</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="app-drawer-overlay d-none animated fadeIn"></div>
+<object th:replace="layout :: scripts"></object>
+</body>
+</html>

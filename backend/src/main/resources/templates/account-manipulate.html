@@ -1,0 +1,82 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head" th:remove="body">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>paybasz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
+    <link rel="icon" href="favicon.ico">
+
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <link href="/custom-style.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-container app-theme-gray">
+    <div class="app-main">
+        <div th:replace="layout :: menu('user')"></div>
+
+        <div class="app-main__outer">
+            <div class="app-main__inner">
+                <div th:replace="layout :: menuMobile"></div>
+                <div class="app-header mt-lg-5">
+                    <div class="page-title-heading" th:if="${acc == null}">
+                        <span class="material-icons fix-material-icons">add_box</span> Felhasználó regisztrálása
+                    </div>
+                    <div class="page-title-heading" th:unless="${acc == null}">
+                        <span class="material-icons fix-material-icons">create</span> Felhasználó módosítása
+                    </div>
+                    <div class="app-header-right">
+
+                    </div>
+                    <div class="app-header-overlay d-none animated fadeIn"></div>
+                </div>
+                <div class="app-inner-layout app-inner-layout-page">
+
+                    <div class="app-inner-layout__wrapper">
+                        <div class="app-inner-layout__content">
+                            <div class="tab-content">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-lg-6">
+                                            <div class="main-card mb-3 card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Felhasználó</h5>
+                                                    <div class="text-danger" th:if="${error != null && error == T(hu.schbme.paybasz.station.controller.AdminController).DUPLICATE_CARD_ERROR}">Ez a kártya már foglalt</div>
+                                                    <form class="" th:action="|/admin/${createMode ? 'create' : 'modify' }-account|" method="post">
+                                                        <input th:unless="${acc == null}"  type="hidden" name="id" th:value="${acc?.getId()}" />
+                                                        <div class="position-relative form-group"><label for="name" class="">Név</label><input name="name" id="name" th:value="${acc?.getName()}" placeholder="" type="text" class="form-control" autocomplete="off" spellcheck="false"></div>
+                                                        <div class="position-relative form-group"><label for="email" class="">Email</label><input name="email" id="email" th:value="${acc?.getEmail()}" placeholder="" type="email" class="form-control" autocomplete="off" spellcheck="false"></div>
+                                                        <div class="position-relative form-group"><label for="phone" class="">Telefon</label><input name="phone" id="phone" th:value="${acc?.getPhone()}" placeholder="+36301234567" type="text" class="form-control" autocomplete="off" spellcheck="false"></div>
+                                                        <div class="position-relative form-group"><label for="card" class="">Kártya</label><input name="card" id="card" th:value="${acc?.getCard()}" placeholder="64 hosszú kártya azonosító" type="text" class="form-control" autocomplete="off" spellcheck="false"></div>
+                                                        <div class="position-relative form-group"><label for="loan" class="">Hitelkeret</label>
+                                                            <div class="input-group">
+                                                                <input name="loan" id="loan" placeholder="" type="number" class="form-control" min="0" max="500000" step="1" value="0" autocomplete="off" spellcheck="false" th:value="${acc?.getMaxLoan() ?: 0}">
+                                                                <div class="input-group-append"><span class="input-group-text bg-light">JMF</span></div>
+                                                            </div>
+                                                        </div>
+                                                        <input th:if="${createMode}" type="submit" class="mt-1 btn btn-info" value="REGISZTRÁCIÓ" />
+                                                        <input th:unless="${createMode}" type="submit" class="mt-1 btn btn-info" value="MÓDOSÍT" />
+                                                        <a th:href="@{/admin/accounts}" class="mt-1 ml-1 btn btn-outline-light">VISSZA</a>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="app-drawer-overlay d-none animated fadeIn"></div>
+<object th:replace="layout :: scripts"></object>
+</body>
+</html>
