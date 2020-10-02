@@ -41,13 +41,53 @@ The compiled files will be available inside the `target/` directory.
 
 ### Available functionalities
 
-#### Statistocs view
+#### Analitics view
+
+![Analitics](docs/backend_analitics.png)
+
+- Basic statistics
+- Full system action log
+- Advanced statisics
 
 #### Users view
 
+![Users](docs/backend_users.png)
+
+- Search for any property
+- Allow/deny user
+- Edit user info
+- Add money
+- Pay using the web terminal
+
+#### Transaction log
+
+![Transaction log](docs/backend_transactions.png)
+
+#### Add money
+
+![Add money](docs/backend_upload.png)
+
+#### Add user
+
+![Add user](docs/backend_add_user.png)
+
+#### Pay
+
+![Pay](docs/backend_payment.png)
+
 #### Gateways view
 
+![Gateways](docs/backend_gateways.png)
+
+- List all of the available gateways
+
 #### Export settings view
+
+![Export](docs/backend_export.png)
+
+- Export users
+- Export transactions
+- Export system log
 
 ## Firmware
 
