@@ -46,19 +46,20 @@
                                             <div class="main-card mb-3 card">
                                                 <div class="card-body">
                                                     <h5 class="card-title">Felhasználó</h5>
-                                                    <div class="text-danger" th:if="${error != null && error == T(hu.schbme.paybasz.station.controller.AdminController).DUPLICATE_CARD_ERROR}">Ez a kártya már foglalt</div>
                                                     <form class="" th:action="|/admin/${createMode ? 'create' : 'modify' }-account|" method="post">
                                                         <input th:unless="${acc == null}"  type="hidden" name="id" th:value="${acc?.getId()}" />
                                                         <div class="position-relative form-group"><label for="name" class="">Név</label><input name="name" id="name" th:value="${acc?.getName()}" placeholder="" type="text" class="form-control" autocomplete="off" spellcheck="false"></div>
                                                         <div class="position-relative form-group"><label for="email" class="">Email</label><input name="email" id="email" th:value="${acc?.getEmail()}" placeholder="" type="email" class="form-control" autocomplete="off" spellcheck="false"></div>
                                                         <div class="position-relative form-group"><label for="phone" class="">Telefon</label><input name="phone" id="phone" th:value="${acc?.getPhone()}" placeholder="+36301234567" type="text" class="form-control" autocomplete="off" spellcheck="false"></div>
                                                         <div class="position-relative form-group"><label for="card" class="">Kártya</label><input name="card" id="card" th:value="${acc?.getCard()}" placeholder="64 hosszú kártya azonosító" type="text" class="form-control" autocomplete="off" spellcheck="false"></div>
+                                                        <div class="text-danger mb-2" th:if="${error != null && error == T(hu.schbme.paybasz.station.controller.AdminController).DUPLICATE_CARD_ERROR}">Ez a kártya már foglalt</div>
                                                         <div class="position-relative form-group"><label for="loan" class="">Hitelkeret</label>
                                                             <div class="input-group">
                                                                 <input name="loan" id="loan" placeholder="" type="number" class="form-control" min="0" max="500000" step="1" value="0" autocomplete="off" spellcheck="false" th:value="${acc?.getMaxLoan() ?: 0}">
                                                                 <div class="input-group-append"><span class="input-group-text bg-light">JMF</span></div>
                                                             </div>
                                                         </div>
+                                                        <div class="position-relative form-group"><label for="comment" class="">Megjegyzés</label><input name="comment" id="comment" th:value="${acc?.getComment()}" placeholder="" type="text" class="form-control" autocomplete="off" spellcheck="false"></div>
                                                         <input th:if="${createMode}" type="submit" class="mt-1 btn btn-info" value="REGISZTRÁCIÓ" />
                                                         <input th:unless="${createMode}" type="submit" class="mt-1 btn btn-info" value="MÓDOSÍT" />
                                                         <a th:href="@{/admin/accounts}" class="mt-1 ml-1 btn btn-outline-light">VISSZA</a>

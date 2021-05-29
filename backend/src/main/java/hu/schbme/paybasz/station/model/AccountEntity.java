@@ -16,7 +16,7 @@ public class AccountEntity {
     @Id
     @Column
     @GeneratedValue
-    private Long id;
+    private Integer id;
 
     @Column(nullable = false)
     private String name;
@@ -38,6 +38,12 @@ public class AccountEntity {
 
     @Column(nullable = false)
     private boolean allowed;
+
+    @Column(nullable = false)
+    private boolean processed;
+
+    @Column(nullable = false)
+    private String comment;
 
     @Transient
     public int getMaxLoan() {

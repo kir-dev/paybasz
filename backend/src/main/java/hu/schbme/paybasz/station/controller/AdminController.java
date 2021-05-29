@@ -2,8 +2,10 @@ package hu.schbme.paybasz.station.controller;
 
 import hu.schbme.paybasz.station.config.AppUtil;
 import hu.schbme.paybasz.station.dto.AccountCreateDto;
+import hu.schbme.paybasz.station.dto.ItemCreateDto;
 import hu.schbme.paybasz.station.dto.PaymentStatus;
 import hu.schbme.paybasz.station.model.AccountEntity;
+import hu.schbme.paybasz.station.model.ItemEntity;
 import hu.schbme.paybasz.station.service.GatewayService;
 import hu.schbme.paybasz.station.service.LoggingService;
 import hu.schbme.paybasz.station.service.TransactionService;
@@ -14,10 +16,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static hu.schbme.paybasz.station.config.AppUtil.formatNumber;
 
+@SuppressWarnings("SpellCheckingInspection")
 @Slf4j
 @Controller
 @RequestMapping("/admin")
@@ -55,7 +60,7 @@ public class AdminController {
     }
 
     @GetMapping("/manual-transaction/{accountId}")
-    public String manualTransaction(@PathVariable Long accountId, Model model) {
+    public String manualTransaction(@PathVariable Integer accountId, Model model) {
         Optional<AccountEntity> account = system.getAccount(accountId);
         account.ifPresentOrElse(acc -> model.addAttribute("balance", acc.getBalance())
                     .addAttribute("loan", Math.abs(acc.getMinimumBalance()))
@@ -71,7 +76,7 @@ public class AdminController {
     }
 
     @PostMapping("/manual-transaction")
-    public String manualTransaction(@RequestParam Long id, @RequestParam Integer money) {
+    public String manualTransaction(@RequestParam Integer id, @RequestParam Integer money) {
         if (money == null || money < 0)
             return "redirect:/admin/manual-transaction/" + id;
 
@@ -88,7 +93,7 @@ public class AdminController {
     }
 
     @GetMapping("/upload-money/{accountId}")
-    public String uploadMoney(@PathVariable Long accountId, Model model) {
+    public String uploadMoney(@PathVariable Integer accountId, Model model) {
         Optional<AccountEntity> account = system.getAccount(accountId);
         account.ifPresentOrElse(
                 acc -> model.addAttribute("name", acc.getName()).addAttribute("id", acc.getId()),
@@ -97,7 +102,7 @@ public class AdminController {
     }
 
     @PostMapping("/upload-money")
-    public String uploadMoney(@RequestParam Long id, @RequestParam Integer money) {
+    public String uploadMoney(@RequestParam Integer id, @RequestParam Integer money) {
         if (money == null || money < 0)
             return "redirect:/admin/upload-money/" + id;
 
@@ -132,7 +137,7 @@ public class AdminController {
     }
 
     @GetMapping("/modify-account/{accountId}")
-    public String modifyUser(@PathVariable Long accountId, Model model) {
+    public String modifyAccount(@PathVariable Integer accountId, Model model) {
         Optional<AccountEntity> account = system.getAccount(accountId);
         model.addAttribute("createMode", false);
         account.ifPresentOrElse(
@@ -142,21 +147,93 @@ public class AdminController {
     }
 
     @PostMapping("/modify-account")
-    public String disallow(Model model, AccountCreateDto acc) {
+    public String modifyAccount(Model model, AccountCreateDto acc) {
         if (acc.getId() == null)
             return "redirect:/admin/accounts";
 
         acc.setCard(acc.getCard().trim().toUpperCase());
         Optional<AccountEntity> account = system.getAccount(acc.getId());
-        if (account.isPresent()) {
-            if (!system.modifyAccount(acc)) {
-                model.addAttribute("createMode", false);
-                model.addAttribute("acc", account.get());
-                model.addAttribute("error", DUPLICATE_CARD_ERROR);
-                return "account-manipulate";
-            }
+        if (account.isPresent() && !system.modifyAccount(acc)) {
+            model.addAttribute("createMode", false);
+            model.addAttribute("acc", account.get());
+            model.addAttribute("error", DUPLICATE_CARD_ERROR);
+            return "account-manipulate";
         }
         return "redirect:/admin/accounts";
+    }
+
+    @GetMapping("/items")
+    public String items(Model model) {
+        final var items = system.getALlItems();
+        model.addAttribute("items", items);
+        model.addAttribute("invalid", items.stream()
+                .filter(ItemEntity::isActive)
+                .collect(Collectors.groupingBy(ItemEntity::getCode))
+                .entrySet().stream()
+                .filter(it -> it.getValue().size() > 1)
+                .map(it -> "#" + it.getKey())
+                .collect(Collectors.joining(", ")));
+
+        return "items";
+    }
+
+    @GetMapping("/create-item")
+    public String createItem(Model model) {
+        model.addAttribute("item", null);
+        model.addAttribute("createMode", true);
+        return "item-manipulate";
+    }
+
+    @PostMapping("/create-item")
+    public String createItem(ItemCreateDto itemDto) {
+        itemDto.setAbbreviation(itemDto.getAbbreviation().trim().toUpperCase());
+        system.createItem(itemDto);
+        return "redirect:/admin/items";
+    }
+
+    @GetMapping("/modify-item/{itemId}")
+    public String modifyItem(@PathVariable Integer itemId, Model model) {
+        Optional<ItemEntity> item = system.getItem(itemId);
+        model.addAttribute("createMode", false);
+        item.ifPresentOrElse(
+                acc -> model.addAttribute("item", acc),
+                () -> model.addAttribute("item", null));
+        return "item-manipulate";
+    }
+
+    @PostMapping("/modify-item")
+    public String modifyItem(ItemCreateDto itemDto) {
+        if (itemDto.getId() == null)
+            return "redirect:/admin/accounts";
+
+        itemDto.setAbbreviation(itemDto.getAbbreviation().trim().toUpperCase());
+        Optional<ItemEntity> item = system.getItem(itemDto.getId());
+        if (item.isPresent()) {
+            system.modifyItem(itemDto);
+        }
+        return "redirect:/admin/items";
+    }
+
+    @PostMapping("/items/activate")
+    public String activateItem(@RequestParam Integer id) {
+        Optional<ItemEntity> item = system.getItem(id);
+        item.ifPresent(it -> {
+            system.setItemActive(id, true);
+            logger.action("<color>" + it.getName() + "</color> termék rendelhető");
+            log.info("Item purchase activated for " + it.getName() + " (" +it.getQuantity() + ")");
+        });
+        return "redirect:/admin/items";
+    }
+
+    @PostMapping("/items/deactivate")
+    public String deactivateItem(@RequestParam Integer id) {
+        Optional<ItemEntity> item = system.getItem(id);
+        item.ifPresent(it -> {
+            system.setItemActive(id, false);
+            logger.failure("<color>" + it.getName() + "</color> termék nem redelhető");
+            log.info("Item purchase deactivated for " + it.getName() + " (" +it.getQuantity() + ")");
+        });
+        return "redirect:/admin/items";
     }
 
     @GetMapping("/transactions")
@@ -177,10 +254,10 @@ public class AdminController {
     }
 
     @PostMapping("/allow")
-    public String allow(@RequestParam Long id) {
+    public String allowAccount(@RequestParam Integer id) {
         Optional<AccountEntity> account = system.getAccount(id);
         account.ifPresent(acc -> {
-            system.setAllowed(id, true);
+            system.setAccountAllowed(id, true);
             logger.action("<color>" + acc.getName() + "</color> tiltása feloldva");
             log.info("User purchases allowed for " + acc.getName());
         });
@@ -188,12 +265,34 @@ public class AdminController {
     }
 
     @PostMapping("/disallow")
-    public String disallow(@RequestParam Long id) {
+    public String disallowAccount(@RequestParam Integer id) {
         Optional<AccountEntity> account = system.getAccount(id);
         account.ifPresent(acc -> {
-            system.setAllowed(id, false);
+            system.setAccountAllowed(id, false);
             logger.failure("<color>" + acc.getName() + "</color> letiltva");
             log.info("User purchases disallowed for " + acc.getName());
+        });
+        return "redirect:/admin/accounts";
+    }
+
+    @PostMapping("/set-processed")
+    public String setProcessedAccount(@RequestParam Integer id) {
+        Optional<AccountEntity> account = system.getAccount(id);
+        account.ifPresent(acc -> {
+            system.setAccountProcessed(id, true);
+            logger.success("<color>" + acc.getName() + "</color> könyvelve");
+            log.info("User status set processed for " + acc.getName());
+        });
+        return "redirect:/admin/accounts";
+    }
+
+    @PostMapping("/unset-processed")
+    public String unsetProcessedAccount(@RequestParam Integer id) {
+        Optional<AccountEntity> account = system.getAccount(id);
+        account.ifPresent(acc -> {
+            system.setAccountProcessed(id, false);
+            logger.failure("<color>" + acc.getName() + "</color> könyvelési státusza: nincs könyvelve");
+            log.info("User processed status unset for " + acc.getName());
         });
         return "redirect:/admin/accounts";
     }

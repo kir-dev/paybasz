@@ -27,7 +27,7 @@
                     <div class="page-title-heading">
                         <span class="material-icons fix-material-icons">people</span> Felhasználók
                         <div class="page-title-subheading">
-                            Itt regisztrálhatsz, módosíthat felhasználókat vagy adhatsz hozzá pénzt az egyenlegükhöz.
+                            Itt regisztrálhatsz, módosíthatsz felhasználókat vagy adhatsz hozzá pénzt az egyenlegükhöz.
                         </div>
                     </div>
                     <div class="app-header-right">
@@ -51,12 +51,12 @@
                                     <div class="card mb-3" style="min-width: 920px">
                                         <div class="card-header-tab card-header">
                                             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                                                <span class="material-icons header-icon icon-gradient bg-plum-plate">people</span>
+                                                <span class="material-icons header-icon icon-gradient bg-love-kiss">people</span>
                                                 FELHASZNÁLÓK
                                             </div>
                                         </div>
                                         <div class="card-body">
-                                                <table style="width: 100%" id="example" class="table table-hover table-striped table-bordered">
+                                                <table style="width: 100%" class="table table-bordered">
                                                     <thead>
                                                     <tr>
                                                         <th>Név</th>
@@ -66,6 +66,7 @@
                                                         <th>Hitel keret</th>
                                                         <th>Vagyon</th>
                                                         <th>Letiltva</th>
+                                                        <th>Megjegyzés</th>
                                                         <th>Lehetőségek</th>
                                                     </tr>
                                                     </thead>
@@ -78,9 +79,12 @@
                                                         <td th:text="|${-acc.getMinimumBalance()} JMF|">1500 JMF</td>
                                                         <td th:text="|${acc.getBalance()} JMF|">0 JMF</td>
                                                         <td th:text="${acc.isAllowed() ? 'Nem' : 'Igen'}">Igen</td>
+                                                        <td th:text="${acc.getComment().isEmpty() ? '' : '###'}" th:title="${acc.getComment()}">...</td>
                                                         <td style="text-align: right">
                                                             <form th:if="${acc.isAllowed()}" method="post" th:action="@{/admin/disallow}" style="display: inline"><input type="hidden" name="id" th:value="${acc.getId()}"><button type="submit" class="mb-2 mr-2 btn btn-danger" title="Letilt"><span class="material-icons fix-material-icons small-icons">block</span></button></form>
                                                             <form th:unless="${acc.isAllowed()}" method="post" th:action="@{/admin/allow}" style="display: inline"><input type="hidden" name="id" th:value="${acc.getId()}"><button type="submit" class="mb-2 mr-2 btn btn-success" title="Engedélyez"><span class="material-icons fix-material-icons small-icons">check_circle_outline</span></button></form>
+                                                            <form th:unless="${acc.isProcessed()}" method="post" th:action="@{/admin/set-processed}" style="display: inline"><input type="hidden" name="id" th:value="${acc.getId()}"><button type="submit" class="mb-2 mr-2 btn btn-light" title="Könyvel"><span class="material-icons fix-material-icons small-icons">turned_in</span></button></form>
+                                                            <form th:if="${acc.isProcessed()}" method="post" th:action="@{/admin/unset-processed}" style="display: inline"><input type="hidden" name="id" th:value="${acc.getId()}"><button type="submit" class="mb-2 mr-2 btn btn-dark" title="Könyvelési státusz visszaállítása"><span class="material-icons fix-material-icons small-icons">turned_in_not</span></button></form>
                                                             <a th:href="|@{/admin/modify-account/}${acc.getId()}|"  class="mb-2 mr-2 btn btn-info" title="Módosítás"><span class="material-icons fix-material-icons small-icons">create</span></a>
                                                             <a th:href="|@{/admin/upload-money/}${acc.getId()}|"  class="mb-2 mr-2 btn btn-alternate" title="Egyenleg feltöltése"><span class="material-icons fix-material-icons small-icons">publish</span></a>
                                                             <a th:href="|@{/admin/manual-transaction/}${acc.getId()}|" class="mb-2 mr-2 btn btn-warning" title="Fizetés"><span class="material-icons fix-material-icons small-icons">payment</span></a>

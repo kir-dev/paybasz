@@ -61,7 +61,7 @@ public class TransactionController {
         gateways.updateLastUsed(gatewayName);
         log.info("New balance from gateway '" + gatewayName + "' card hash: '" + request.getCard().toUpperCase() + "'");
         Optional<AccountEntity> account = system.getAccountByCard(request.getCard().toUpperCase());
-        AccountBalance accountBalance = account.map(accountEntity -> new AccountBalance(accountEntity.getBalance(), isLoadAllowed(accountEntity), accountEntity.isAllowed()))
+        var accountBalance = account.map(accountEntity -> new AccountBalance(accountEntity.getBalance(), isLoadAllowed(accountEntity), accountEntity.isAllowed()))
                 .orElseGet(() -> new AccountBalance(0, false, false));
 
         logger.action("<badge>" + account.map(AccountEntity::getName).orElse("n/a")

@@ -8,12 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.event.ContextStartedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -67,12 +63,13 @@ public class AutoExportService implements CommandLineRunner {
     }
 
     private void save(String tag) {
-        File saves = new File("saves");
+        var saves = new File("saves");
         saves.mkdir();
         try {
-            Files.writeString(Path.of("saves/autosave-" + tag + "-accounts.csv"), system.exportAccounts());
-            Files.writeString(Path.of("saves/autosave-" + tag + "-transactions.csv"), system.exportTransactions());
-            Files.writeString(Path.of("saves/autosave-" + tag + "-logs.csv"), system.exportTransactions());
+            var filePattern = "saves/autosave-%s-%s.csv";
+            Files.writeString(Path.of(String.format(filePattern, tag, "accounts")), system.exportAccounts());
+            Files.writeString(Path.of(String.format(filePattern, tag, "transactions")), system.exportTransactions());
+            Files.writeString(Path.of(String.format(filePattern, tag, "logs")), system.exportTransactions());
         } catch (IOException e) {
             log.error("Exception happened during " + tag + " auto-save", e);
         }

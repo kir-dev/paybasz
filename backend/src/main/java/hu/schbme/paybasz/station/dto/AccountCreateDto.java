@@ -11,12 +11,13 @@ import javax.persistence.Transient;
 @NoArgsConstructor
 public class AccountCreateDto {
 
-    private Long id = null;
+    private Integer id = null;
     private String name;
     private String email;
     private String phone;
     private String card;
     private Integer loan;
+    private String comment;
 
     @Transient
     public int getMaxLoan() {

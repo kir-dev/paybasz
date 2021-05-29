@@ -27,7 +27,7 @@ public class TransactionEntity {
     private String cardId;
 
     @Column(nullable = false)
-    private Long account;
+    private Integer account;
 
     @Column(nullable = false)
     private String cardHolder;

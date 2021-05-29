@@ -1,0 +1,86 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head" th:remove="body">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>paybasz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
+    <link rel="icon" href="favicon.ico">
+
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <link href="/custom-style.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-container app-theme-gray">
+    <div class="app-main">
+        <div th:replace="layout :: menu('items')"></div>
+
+        <div class="app-main__outer">
+            <div class="app-main__inner">
+                <div th:replace="layout :: menuMobile"></div>
+                <div class="app-header mt-lg-5">
+                    <div class="page-title-heading" th:if="${item == null}">
+                        <span class="material-icons fix-material-icons">add_box</span> Termék hozzáadása
+                    </div>
+                    <div class="page-title-heading" th:unless="${item == null}">
+                        <span class="material-icons fix-material-icons">create</span> Termék módosítása
+                    </div>
+                    <div class="app-header-right">
+
+                    </div>
+                    <div class="app-header-overlay d-none animated fadeIn"></div>
+                </div>
+                <div class="app-inner-layout app-inner-layout-page">
+
+                    <div class="app-inner-layout__wrapper">
+                        <div class="app-inner-layout__content">
+                            <div class="tab-content">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-lg-6">
+                                            <div class="main-card mb-3 card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Termék</h5>
+                                                    <form class="" th:action="|/admin/${createMode ? 'create' : 'modify' }-item|" method="post">
+                                                        <input th:unless="${item == null}"  type="hidden" name="id" th:value="${item?.getId()}" />
+                                                        <div class="position-relative form-group"><label for="code" class="">Kód</label>
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend"><span class="input-group-text bg-light">#</span></div>
+                                                                <input name="code" id="code" th:value="${item?.getCode()}" placeholder="" type="text" class="form-control" autocomplete="off" spellcheck="false">
+                                                            </div>
+                                                        </div>
+                                                        <div class="position-relative form-group"><label for="name" class="">Név</label><input name="name" id="name" th:value="${item?.getName()}" placeholder="" type="text" class="form-control" autocomplete="off" spellcheck="false"></div>
+                                                        <div class="position-relative form-group"><label for="quantity" class="">Mennyiség</label><input name="quantity" id="quantity" th:value="${item?.getQuantity()}" placeholder="" type="text" class="form-control" autocomplete="off" spellcheck="false"></div>
+                                                        <div class="position-relative form-group"><label for="price" class="">Ár</label>
+                                                            <div class="input-group">
+                                                                <input name="price" id="price" placeholder="" type="number" class="form-control" min="0" max="500000" step="1" value="0" autocomplete="off" spellcheck="false" th:value="${item?.getPrice() ?: 0}">
+                                                                <div class="input-group-append"><span class="input-group-text bg-light">JMF</span></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="position-relative form-group"><label for="abbreviation" class="">Rövidítés</label><input name="abbreviation" id="abbreviation" th:value="${item?.getAbbreviation()}" placeholder="" type="text" class="form-control" autocomplete="off" spellcheck="false"></div>
+                                                        <input th:if="${createMode}" type="submit" class="mt-1 btn btn-info" value="HOZZÁAD" />
+                                                        <input th:unless="${createMode}" type="submit" class="mt-1 btn btn-info" value="MÓDOSÍT" />
+                                                        <a th:href="@{/admin/items}" class="mt-1 ml-1 btn btn-outline-light">VISSZA</a>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="app-drawer-overlay d-none animated fadeIn"></div>
+<object th:replace="layout :: scripts"></object>
+</body>
+</html>

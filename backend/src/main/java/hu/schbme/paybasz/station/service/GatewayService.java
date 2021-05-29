@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Deque;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -29,7 +28,7 @@ public class GatewayService {
 
     public static final String WEB_TERMINAL_NAME = "WebTerminal";
 
-    private ConcurrentMap<String, Gateway> gateways = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Gateway> gateways = new ConcurrentHashMap<>();
 
     @Autowired
     private LoggingService logger;

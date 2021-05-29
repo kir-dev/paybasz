@@ -1,0 +1,102 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head" th:remove="body">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>PayBasz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
+    <link rel="icon" href="favicon.ico">
+
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <link href="/custom-style.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-container app-theme-gray">
+    <div class="app-main">
+        <div th:replace="layout :: menu('items')"></div>
+
+        <div class="app-main__outer">
+            <div class="app-main__inner">
+                <div th:replace="layout :: menuMobile"></div>
+                <div class="app-header mt-lg-5">
+                    <div class="page-title-heading">
+                        <span class="material-icons fix-material-icons">local_mall</span> Termékek
+                        <div class="page-title-subheading">
+                            Előre nevesített és árazott termékek kezelése
+                        </div>
+                    </div>
+                    <div class="app-header-right"></div>
+                    <div class="app-header-overlay d-none animated fadeIn"></div>
+                </div>
+                <div class="app-inner-layout app-inner-layout-page">
+
+                    <div class="app-inner-layout__wrapper">
+                        <div class="app-inner-layout__content">
+                            <div class="tab-content">
+                                <div class="container-fluid">
+                                    <div class="text-center d-block p-3 m-2">
+                                        <a class="btn-pill btn-wide fsize-1 btn btn-info" th:href="@{/admin/create-item}">
+                                            <span class="mr-2 opacity-7">
+                                                <i class="icon"><span class="material-icons">add_shopping_cart</span></i>
+                                            </span>
+                                            <span class="mr-1">Termék Létrehozása</span>
+                                        </a>
+                                    </div>
+                                    <div class="card mb-3" style="min-width: 920px">
+                                        <div class="card-header-tab card-header">
+                                            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                                                <span class="material-icons header-icon icon-gradient bg-malibu-beach">local_mall</span>
+                                                TERMÉKEK
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="text-danger mb-3" th:if="${invalid != ''}" th:text="|Több termék rendelhető azonos (${invalid}) azonosítóval!|">Több termék rendelhető azonos (#201, #203) azonosítóval!</div>
+                                            <table style="width: 100%" class="table table-bordered">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Kód</th>
+                                                        <th>Név</th>
+                                                        <th>Mennyiség</th>
+                                                        <th>Ár</th>
+                                                        <th>Rövidítés</th>
+                                                        <th>Rendelhető</th>
+                                                        <th>Lehetőségek</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr th:each="item : ${items}">
+                                                        <td th:text="|#${item.getCode()}|">#301</td>
+                                                        <td th:text="${item.getName()}">Napi menü</td>
+                                                        <td th:text="${item.getQuantity()}">5dl</td>
+                                                        <td th:text="|${item.getPrice()} JMF|">750 JMF</td>
+                                                        <td th:text="${item.getAbbreviation()}">Napi menu 50</td>
+                                                        <td th:text="${item.isActive() ? 'Igen' : 'Nem'}">Igen</td>
+                                                        <td style="text-align: right">
+                                                            <form th:unless="${item.isActive()}" method="post" th:action="@{/admin/items/activate}" style="display: inline"><input type="hidden" name="id" th:value="${item.getId()}"><button type="submit" class="mb-2 mr-2 btn btn-danger" title="Aktivál"><span class="material-icons fix-material-icons small-icons">block</span></button></form>
+                                                            <form th:if="${item.isActive()}" method="post" th:action="@{/admin/items/deactivate}" style="display: inline"><input type="hidden" name="id" th:value="${item.getId()}"><button type="submit" class="mb-2 mr-2 btn btn-success" title="Deaktivál"><span class="material-icons fix-material-icons small-icons">check_circle_outline</span></button></form>
+                                                            <a th:href="|@{/admin/modify-item/}${item.getId()}|"  class="mb-2 mr-2 btn btn-info" title="Módosítás"><span class="material-icons fix-material-icons small-icons">create</span></a>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="app-drawer-overlay d-none animated fadeIn"></div>
+<object th:replace="layout :: scripts"></object>
+</body>
+</html>

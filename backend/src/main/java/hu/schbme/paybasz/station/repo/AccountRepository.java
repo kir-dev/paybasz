@@ -6,10 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Repository
-public interface AccountRepository extends CrudRepository<AccountEntity, Long> {
+public interface AccountRepository extends CrudRepository<AccountEntity, Integer> {
 
     Optional<AccountEntity> findByCard(String card);
 
