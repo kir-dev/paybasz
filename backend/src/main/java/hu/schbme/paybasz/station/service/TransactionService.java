@@ -253,11 +253,12 @@ public class TransactionService {
 
     @Transactional(readOnly = true)
     public String exportAccounts() {
-        return "id;name;email;phone;card;balance;minimumBalance;allowedToPay"
+        return "id;name;email;phone;card;balance;minimumBalance;allowedToPay;processed;comment"
                 + System.lineSeparator()
                 + accounts.findAllByOrderById().stream()
                 .map(it -> Stream.of("" + it.getId(), it.getName(), it.getEmail(), it.getPhone(), it.getCard(),
-                        "" + it.getBalance(), "" + it.getMinimumBalance(), "" + it.isAllowed())
+                            "" + it.getBalance(), "" + it.getMinimumBalance(), "" + it.isAllowed(), "" + it.isProcessed(),
+                            it.getComment())
                         .map(attr -> attr.replace(";", "\\;"))
                         .collect(Collectors.joining(";")))
                 .collect(Collectors.joining(System.lineSeparator()));
@@ -268,8 +269,21 @@ public class TransactionService {
         return "id;timestamp;time;sender;receiver;amount;card;description;message;senderId;paymentOrUpload"
                 + System.lineSeparator()
                 + transactions.findAllByOrderById().stream()
-                .map(it -> Stream.of("" + it.getId(), "" + it.getTime(), it.formattedTime(), it.getCardHolder(), it.getReceiver(), "" + it.getAmount(),
-                        it.getCardId(), it.getPaymentDescription(), it.getMessage(), "" + it.getAmount(), "" + it.isRegular())
+                .map(it -> Stream.of("" + it.getId(), "" + it.getTime(), it.formattedTime(), it.getCardHolder(),
+                            it.getReceiver(), "" + it.getAmount(), it.getCardId(), it.getPaymentDescription(),
+                            it.getMessage(), "" + it.getAmount(), "" + it.isRegular())
+                        .map(attr -> attr.replace(";", "\\;"))
+                        .collect(Collectors.joining(";")))
+                .collect(Collectors.joining(System.lineSeparator()));
+    }
+
+    @Transactional(readOnly = true)
+    public String exportItems() {
+        return "id;name;quantity;code;abbreviation;price;active"
+                + System.lineSeparator()
+                + items.findAllByOrderById().stream()
+                .map(it -> Stream.of("" + it.getId(), "" + it.getName(), it.getQuantity(), it.getCode(), it.getAbbreviation(),
+                            "" + it.getPrice(), "" + it.isActive())
                         .map(attr -> attr.replace(";", "\\;"))
                         .collect(Collectors.joining(";")))
                 .collect(Collectors.joining(System.lineSeparator()));

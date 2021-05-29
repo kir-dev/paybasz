@@ -333,4 +333,16 @@ public class AdminController {
         return csvExport;
     }
 
+    @GetMapping("/export/items")
+    @ResponseBody
+    public String exportItems(HttpServletResponse response) {
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"paybasz-items-"
+                + AppUtil.DATE_TIME_FILE_FORMATTER.format(System.currentTimeMillis()) + ".csv\"");
+
+        String csvExport = system.exportItems();
+        logger.action("Termék lista kiexportálva");
+        return csvExport;
+    }
+
 }

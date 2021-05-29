@@ -11,4 +11,6 @@ public interface ItemRepository extends CrudRepository<ItemEntity, Integer> {
 
     List<ItemEntity> findAll();
 
+    List<ItemEntity> findAllByOrderById();
+
 }
