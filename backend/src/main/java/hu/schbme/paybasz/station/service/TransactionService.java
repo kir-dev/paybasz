@@ -2,6 +2,7 @@ package hu.schbme.paybasz.station.service;
 
 import hu.schbme.paybasz.station.dto.AccountCreateDto;
 import hu.schbme.paybasz.station.dto.ItemCreateDto;
+import hu.schbme.paybasz.station.dto.ItemQueryResult;
 import hu.schbme.paybasz.station.dto.PaymentStatus;
 import hu.schbme.paybasz.station.model.AccountEntity;
 import hu.schbme.paybasz.station.model.ItemEntity;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,7 +23,7 @@ import java.util.stream.Stream;
 
 import static hu.schbme.paybasz.station.service.GatewayService.WEB_TERMINAL_NAME;
 
-@SuppressWarnings("DefaultAnnotationParam")
+@SuppressWarnings({"DefaultAnnotationParam", "SpellCheckingInspection"})
 @Slf4j
 @Service
 public class TransactionService {
@@ -328,4 +330,20 @@ public class TransactionService {
         items.save(item);
     }
 
+    @Transactional(readOnly = true)
+    public ItemQueryResult resolveItemQuery(String query) {
+        if (query.startsWith("#"))
+            query = query.substring(1);
+
+        final String[] parts = query.split("\\*", 2);
+        String code = parts[0];
+        int amount = parts.length > 1 ? Integer.parseInt(parts[1]) : 1;
+
+        return items.findAllByCodeAndActiveTrueOrderByPriceDesc(code)
+                .stream().findFirst()
+                .map(it -> new ItemQueryResult(true,
+                it.getAbbreviation() + (amount > 1 ? ("x" + amount) : ""),
+                it.getPrice() * amount))
+                .orElseGet(() -> new ItemQueryResult(false, "not found", 0));
+    }
 }

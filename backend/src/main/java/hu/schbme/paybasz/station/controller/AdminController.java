@@ -124,7 +124,7 @@ public class AdminController {
     }
 
     @PostMapping("/create-account")
-    public String createUser(Model model, AccountCreateDto acc) {
+    public String createAccount(Model model, AccountCreateDto acc) {
         acc.setCard(acc.getCard().trim().toUpperCase());
         if (system.createAccount(acc)) {
             return "redirect:/admin/accounts";
@@ -186,7 +186,7 @@ public class AdminController {
 
     @PostMapping("/create-item")
     public String createItem(ItemCreateDto itemDto) {
-        itemDto.setAbbreviation(itemDto.getAbbreviation().trim().toUpperCase());
+        itemDto.setAbbreviation(itemDto.getAbbreviation().trim());
         system.createItem(itemDto);
         return "redirect:/admin/items";
     }
@@ -206,7 +206,7 @@ public class AdminController {
         if (itemDto.getId() == null)
             return "redirect:/admin/accounts";
 
-        itemDto.setAbbreviation(itemDto.getAbbreviation().trim().toUpperCase());
+        itemDto.setAbbreviation(itemDto.getAbbreviation().trim());
         Optional<ItemEntity> item = system.getItem(itemDto.getId());
         if (item.isPresent()) {
             system.modifyItem(itemDto);

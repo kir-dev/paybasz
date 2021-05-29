@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentRequest {
+public class ItemQueryRequest {
 
-    private String card;
-    private Integer amount;
+    private String query;
     private String gatewayCode;
-    private String details;
 
 }

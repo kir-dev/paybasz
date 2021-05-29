@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import static hu.schbme.paybasz.station.PaybaszApplication.VERSION;
 
+@SuppressWarnings("SpellCheckingInspection")
 @Slf4j
 @RestController
 @RequestMapping("/api")
@@ -31,10 +32,7 @@ public class TransactionController {
     private LoggingService logger;
 
     @PostMapping("/pay/{gatewayName}")
-    public PaymentStatus pay(
-            @PathVariable String gatewayName,
-            @RequestBody PaymentRequest request
-    ) {
+    public PaymentStatus pay(@PathVariable String gatewayName, @RequestBody PaymentRequest request) {
         if (!gateways.authorizeGateway(gatewayName, request.getGatewayCode()))
             return PaymentStatus.UNAUTHORIZED_TERMINAL;
         gateways.updateLastUsed(gatewayName);
@@ -42,7 +40,9 @@ public class TransactionController {
             return PaymentStatus.INTERNAL_ERROR;
 
         try {
-            return system.proceedPayment(request.getCard().toUpperCase(), request.getAmount(), "via " + gatewayName, gatewayName);
+            return system.proceedPayment(request.getCard().toUpperCase(), request.getAmount(),
+                    request.getDetails() == null ? "" : request.getDetails(),
+                    gatewayName);
         } catch (Exception e) {
             log.error("Error during proceeding payment", e);
             logger.failure("Sikertelen fizetés: belső szerver hiba");
@@ -75,9 +75,9 @@ public class TransactionController {
         log.info("Gateways auth request: " + gatewayName + " (" + (valid ? "OK" : "INVALID") + ")");
         if (valid) {
             gateways.updateLastUsed(gatewayName);
-            logger.action("Terminál autentikáció sikeres: <color>" + gatewayName + "</color>");
+            logger.action("Terminál authentikáció sikeres: <color>" + gatewayName + "</color>");
         } else {
-            logger.failure("Terminál autentikáció sikertelen: <color>" + gatewayName + "</color>");
+            logger.failure("Terminál authentikáció sikertelen: <color>" + gatewayName + "</color>");
         }
         return valid ? ValidationStatus.OK : ValidationStatus.INVALID;
     }
@@ -92,6 +92,20 @@ public class TransactionController {
         gateways.appendReading(gatewayName, readingRequest.getCard().toUpperCase());
         gateways.updateLastUsed(gatewayName);
         return ValidationStatus.OK;
+    }
+
+    @PostMapping("/query/{gatewayName}")
+    public ItemQueryResult query(@PathVariable String gatewayName, @RequestBody ItemQueryRequest request) {
+        if (!gateways.authorizeGateway(gatewayName, request.getGatewayCode()))
+            return new ItemQueryResult(false, "unauthorized", 0);
+        gateways.updateLastUsed(gatewayName);
+
+        try {
+            return system.resolveItemQuery(request.getQuery());
+        } catch (Exception e) {
+            logger.failure("Sikertelen termék lekérdezés: " + request.getQuery());
+            return new ItemQueryResult(false, "invalid query", 0);
+        }
     }
 
     @GetMapping("/status")
