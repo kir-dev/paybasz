@@ -17,12 +17,21 @@
 #include "Screens.h"
 #include "BoardPins.h"
 #include "NetworkHelper.h"
+#include "PermanentMemory.h"
+#include "SetupMode.h"
 #include "Firmare.gen.h" // FIXME: generate
 
 Keypad * keypad;
 DisplayManager * displayManager;
 RfidReader * rfidReader;
 NetworkHelper * networkHelper;
+PermanentMemory * permanentMemory;
+
+bool setupMode = false;
+
+void enterSetupModeManually(char key) {
+    setupMode = (key == '*');
+}
 
 void setup() {
     Serial.begin(9600);
@@ -49,29 +58,44 @@ void setup() {
             PIN_KEYPAD_ROW_4,
             PIN_KEYPAD_ROW_5);
     keypad->setupKeypad();
+    keypad->handleKeypad(esp_log_timestamp());
+    keypad->setKeyPressListener(enterSetupModeManually)
 
     // Serial
     while (!Serial);
     delay(DEBUG_WAIT_MS);
     Serial.println("[SETUP] Starting: paybasz");
-    Serial.println("[SETUP] Display: GO"); // FIXME: calc true GO. NO-GO
-    Serial.println("[SETUP] Keypad: GO");
+    keypad->handleKeypad(esp_log_timestamp());
+
+    // Permanent memory
+    permanentMemory = new PermanentMemory();
+    permanentMemory->load();
+    setupMode = permanentMemory->isSetup();
+
+    if (setupMode) {
+        Serial.println("[SETUP] Entering SETUP configuration mode...");
+        setupModeSetup();
+        return;
+    }
 
     // Wifi
     networkHelper = new NetworkHelper();
     networkHelper->setupWifi();
-    NetworkHelper::setupUrls(TEST_BASE_URL, "proto1");
+    NetworkHelper::setupUrls(
+            permanentMemory->baseUrl,
+            permanentMemory->gatewayName,
+            permanentMemory->token);
 
     // Rfid
     rfidReader = new RfidReader(PIN_RFID_RST, PIN_RFID_CS, displayManager);
     rfidReader->setupRfidReader();
-    Serial.println("[SETUP] RFID: GO");
+    Serial.println("[SETUP] RFID: OK");
 
     // Screens
     ScreenBase::setupScreen(keypad, displayManager, rfidReader, networkHelper);
     keypad->setKeyPressListener(ScreenBase::handleKeyEvents);
     ScreenBase::setActiveScreen(INIT_SCREEN_INSTANCE);
-    Serial.println("[SETUP] Screens: GO");
+    Serial.println("[SETUP] Screens: OK");
 
     // Piezo Buzzer
     ledcSetup(BUZZER_CHANNEL, BUZZER_SOUND_HZ, 8);
@@ -83,6 +107,11 @@ void setup() {
 }
 
 void loop() {
+    if (setupMode) {
+        setupModeLoop();
+        return;
+    }
+
     try {
         delay(10);
         unsigned long millis = esp_log_timestamp();

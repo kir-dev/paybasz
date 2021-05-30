@@ -10,10 +10,12 @@ char * NetworkHelper::ACCOUNT_URL = nullptr;
 char * NetworkHelper::PAYMENT_URL = nullptr;
 char * NetworkHelper::VALIDATE_URL = nullptr;
 char * NetworkHelper::STATUS_URL = nullptr;
+char * NetworkHelper::TOKEN = nullptr;
 
-void NetworkHelper::setupUrls(char * baseUrl, char * gatewayName) {
+void NetworkHelper::setupUrls(char * baseUrl, char * gatewayName, char * token) {
     int baseLength = strlen(baseUrl);
     int gatewayLength = strlen(gatewayName);
+    NetworkHelper::TOKEN = token;
 
     READING_URL = new char[baseLength + 9 + gatewayLength + 1];
     strcpy(READING_URL, baseUrl);
@@ -69,8 +71,7 @@ void NetworkHelper::sendReading(const char * cardHash) {
             http.begin(READING_URL);
             http.addHeader("Content-Type", "application/json");
             char message[64 + 64 + 28 + 1];
-            sprintf(message, "{\"card\":\"%s\",\"gatewayCode\":\"%s\"}", cardHash,
-                    "0581e7b46cfcb0512099eec1095aaa5648ff0812aa6b3d4a66c772b51d8b8ce8");
+            sprintf(message, "{\"card\":\"%s\",\"gatewayCode\":\"%s\"}", cardHash, NetworkHelper::TOKEN);
             int httpResponseCode = http.PUT(message);
 
             Serial.print("[API] HTTP Response code: ");
@@ -113,8 +114,7 @@ AccountBalance NetworkHelper::getAccountBalance(const char * cardHash) {
             http.begin(ACCOUNT_URL);
             http.addHeader("Content-Type", "application/json");
             char message[64 + 64 + 28 + 1];
-            sprintf(message, "{\"card\":\"%s\",\"gatewayCode\":\"%s\"}", cardHash,
-                    "0581e7b46cfcb0512099eec1095aaa5648ff0812aa6b3d4a66c772b51d8b8ce8");
+            sprintf(message, "{\"card\":\"%s\",\"gatewayCode\":\"%s\"}", cardHash, NetworkHelper::TOKEN);
             int httpResponseCode = http.PUT(message);
 
             Serial.print("[API] HTTP Response code: ");
@@ -164,8 +164,8 @@ void NetworkHelper::proceedPayment(const char * cardHash, uint32_t amount) {
             http.begin(PAYMENT_URL);
             http.addHeader("Content-Type", "application/json");
             char message[64 + 64 + 28 + 16 + 1];
-            sprintf(message, "{\"card\":\"%s\",\"amount\":%d,\"gatewayCode\":\"%s\"}", cardHash,
-                    amount, "0581e7b46cfcb0512099eec1095aaa5648ff0812aa6b3d4a66c772b51d8b8ce8");
+            sprintf(message, "{\"card\":\"%s\",\"amount\":%d,\"gatewayCode\":\"%s\"}",
+                    cardHash, amount, NetworkHelper::TOKEN);
             int httpResponseCode = http.POST(message);
 
             Serial.print("[API] HTTP Response code: ");

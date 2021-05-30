@@ -21,6 +21,7 @@ private:
     static char * PAYMENT_URL;
     static char * VALIDATE_URL;
     static char * STATUS_URL;
+    static char * TOKEN;
 public:
     NetworkHelper() {}
     void setupWifi();
@@ -29,7 +30,7 @@ public:
     AccountBalance getAccountBalance(const char * cardHash);
     void proceedPayment(const char * cardHash, uint32_t amount);
 
-    static void setupUrls(char * baseUrl, char * gatewayName);
+    static void setupUrls(char * baseUrl, char * gatewayName, char * token);
 };
 
 #endif //PAYBASZ_NETWORKHELPER_H

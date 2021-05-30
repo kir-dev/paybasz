@@ -5,37 +5,38 @@
 
 class PermanentMemory {
 private:
-    static constexpr uint8_t STATE_LENGTH = 2;
-    static constexpr uint8_t PIN_LENGTH = 8 + 1;
-    static constexpr uint8_t SSID_LENGTH = 32 + 1;
-    static constexpr uint8_t WPASSWD_LENGTH = 63 + 1;
-    static constexpr uint8_t GW_NAME_LENGTH = 63 + 1;
-    static constexpr uint8_t TOKEN_LENGTH = 63 + 1;
+    static constexpr unsigned int STATUS_LENGTH = 1;
+    static constexpr unsigned int PIN_LENGTH = 8 + 1;
+    static constexpr unsigned int SSID_LENGTH = 32 + 1;
+    static constexpr unsigned int WPASSWD_LENGTH = 63 + 1;
+    static constexpr unsigned int GW_NAME_LENGTH = 63 + 1;
+    static constexpr unsigned int TOKEN_LENGTH = 64 + 1;
+    static constexpr unsigned int BASE_URL_LENGTH = 128 + 1;
 
-    inline void fillEmpty(uint8_t * var, uint8_t length);
+    inline void fillEmpty(char * var, unsigned int length);
 public:
-    uint8_t state[STATE_LENGTH]; // 1<<1 LOCKED| 1 << 0 SETUP
-    uint8_t pinCode[PIN_LENGTH]; // chars allowed
-    uint8_t ssid[SSID_LENGTH];
-    uint8_t wifiPassword[WPASSWD_LENGTH];
-    uint8_t gatewayName[GW_NAME_LENGTH];
-    uint8_t token[TOKEN_LENGTH];
-    uint8_t baseUrlLength;
-    uint8_t * baseUrl;
+    char state; // 1<<1 LOCKED| 1 << 0 SETUP
+    char pinCode[PIN_LENGTH];
+    char ssid[SSID_LENGTH];
+    char wifiPassword[WPASSWD_LENGTH];
+    char gatewayName[GW_NAME_LENGTH];
+    char token[TOKEN_LENGTH];
+    char baseUrl[BASE_URL_LENGTH];
 
-    PermanentMemory() : baseUrl(nullptr), baseUrlLength(0) {
+    PermanentMemory() {
         fillEmpty(state, STATE_LENGTH);
         fillEmpty(pinCode, PIN_LENGTH);
         fillEmpty(ssid, SSID_LENGTH);
         fillEmpty(wifiPassword, WPASSWD_LENGTH);
         fillEmpty(gatewayName, GW_NAME_LENGTH);
         fillEmpty(token, TOKEN_LENGTH);
+        fillEmpty(baseUrl, BASE_URL_LENGTH);
     }
 
     bool isLocked();
+    bool isSetup();
     void save();
     void load();
-    void getHashedToken(char hash[41]);
 };
 
 #endif //PAYBASZ_PERMANENTMEMORY_H
