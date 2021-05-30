@@ -1,0 +1,99 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    width: 100%;
+    background-color: #000000;
+}
+
+input:focus {
+    outline: none;
+}
+
+.display {
+    background-color: #000000;
+    max-width: 800px;
+    max-height: 60vh;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.display .border {
+    border: 1vmin solid #0a66b7;
+    width: 70vw;
+    height: 46vw;
+    margin: 10vh auto;
+}
+
+.display span {
+    color: #FFFFFF;
+    display: block;
+    padding: 4px 8px;
+}
+
+.display span.title {
+    text-align: center;
+}
+
+.display span.line {
+
+}
+
+.display .color-light-blue {
+    border-color: #0a66b7;
+    color: #0a66b7;
+}
+
+.display .color-cyan {
+    border-color: #32baa6;
+    color: #32baa6;
+}
+
+.display .color-white {
+    border-color: #FFFFFF;
+    color: #FFFFFF;
+}
+
+.keypad {
+    background-color: #74F2CE;
+    padding: 1rem;
+    font-weight: bold;
+    border-collapse: separate;
+    border-spacing: 0.5rem;
+    font-size: 20px;
+    border-radius: 8px;
+    width: 100vw;
+    max-width: 800px;
+    height: 40vh;
+}
+
+.keypad .table-field {
+    height: 2rem;
+    width: 4rem;
+    border-radius: 4px;
+    background-color: #FFFFFF;
+    text-align: center;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+    transition: box-shadow ease 0.2s;
+    cursor: pointer;
+}
+
+.keypad .table-key-function {
+    background-color: #FFFF00;
+}
+
+.keypad .table-key-control {
+    background-color: #FF0000;
+}
+
+.keypad .table-key-control-circle {
+    background-color: #FF0000;
+    border-radius: 3rem;
+}
+
+.keypad .table-field:hover {
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.3);
+}

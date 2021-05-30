@@ -27,9 +27,6 @@ public class AutoExportService implements CommandLineRunner {
     private TransactionService system;
 
     @Autowired
-    private GatewayService gatewayService;
-
-    @Autowired
     private LoggingService logger;
 
     @Value("${server.port}")
@@ -57,6 +54,11 @@ public class AutoExportService implements CommandLineRunner {
         save("1h");
     }
 
+    @Scheduled(fixedRate = 1000 * 60 * 30)
+    public void autoSave30mAndPersist() {
+        save("30m-" + AppUtil.DATE_TIME_FILE_FORMATTER.format(System.currentTimeMillis()));
+    }
+
     @PreDestroy
     public void autoSaveOnStop() {
         save("stop-at-" + AppUtil.DATE_TIME_FILE_FORMATTER.format(System.currentTimeMillis()));
@@ -69,7 +71,8 @@ public class AutoExportService implements CommandLineRunner {
             var filePattern = "saves/autosave-%s-%s.csv";
             Files.writeString(Path.of(String.format(filePattern, tag, "accounts")), system.exportAccounts());
             Files.writeString(Path.of(String.format(filePattern, tag, "transactions")), system.exportTransactions());
-            Files.writeString(Path.of(String.format(filePattern, tag, "logs")), system.exportTransactions());
+            Files.writeString(Path.of(String.format(filePattern, tag, "logs")), logger.exportLogs());
+            Files.writeString(Path.of(String.format(filePattern, tag, "items")), system.exportItems());
         } catch (IOException e) {
             log.error("Exception happened during " + tag + " auto-save", e);
         }
