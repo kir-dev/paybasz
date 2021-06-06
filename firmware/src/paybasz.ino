@@ -19,7 +19,7 @@
 #include "NetworkHelper.h"
 #include "PermanentMemory.h"
 #include "SetupMode.h"
-#include "Firmare.gen.h" // FIXME: generate
+#include "Firmware.h" // FIXME: generate
 
 Keypad * keypad;
 DisplayManager * displayManager;
@@ -34,7 +34,8 @@ void enterSetupModeManually(char key) {
 }
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
+
     // Display
     displayManager = new DisplayManager(
             PIN_DISPLAY_RST,
@@ -70,17 +71,23 @@ void setup() {
     // Permanent memory
     permanentMemory = new PermanentMemory();
     permanentMemory->load();
-    setupMode = permanentMemory->isSetup();
 
-    if (setupMode) {
+    if (setupMode || permanentMemory->isSetup()) {
         Serial.println("[SETUP] Entering SETUP configuration mode...");
         setupModeSetup();
         return;
     }
 
+    Serial.println("[SETUP] Loaded config:");
+    Serial.println("[SETUP] - SSID: " + String(permanentMemory->ssid));
+    Serial.println("[SETUP] - PW: " + String(permanentMemory->wifiPassword)); // FIXME: don't print after tested
+    Serial.println("[SETUP] - NAME: " + String(permanentMemory->gatewayName));
+    Serial.println("[SETUP] - TOKEN: " + String(permanentMemory->token));
+    Serial.println("[SETUP] - BASE URL: " + String(permanentMemory->baseUrl));
+
     // Wifi
     networkHelper = new NetworkHelper();
-    networkHelper->setupWifi();
+    networkHelper->setupWifi(permanentMemory->ssid, permanentMemory->wifiPassword);
     NetworkHelper::setupUrls(
             permanentMemory->baseUrl,
             permanentMemory->gatewayName,

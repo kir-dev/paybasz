@@ -5,6 +5,8 @@
 
 class PermanentMemory {
 private:
+    inline void fillEmpty(char * var, unsigned int length);
+public:
     static constexpr unsigned int STATUS_LENGTH = 1;
     static constexpr unsigned int PIN_LENGTH = 8 + 1;
     static constexpr unsigned int SSID_LENGTH = 32 + 1;
@@ -13,8 +15,6 @@ private:
     static constexpr unsigned int TOKEN_LENGTH = 64 + 1;
     static constexpr unsigned int BASE_URL_LENGTH = 128 + 1;
 
-    inline void fillEmpty(char * var, unsigned int length);
-public:
     char state; // 1<<1 LOCKED| 1 << 0 SETUP
     char pinCode[PIN_LENGTH];
     char ssid[SSID_LENGTH];
@@ -35,6 +35,7 @@ public:
 
     bool isLocked();
     bool isSetup();
+    void setSetup(bool value);
     void save();
     void load();
 };

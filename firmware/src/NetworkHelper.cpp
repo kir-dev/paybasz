@@ -2,7 +2,7 @@
 #include <WiFi.h>
 #include <WiFiMulti.h>
 #include <HTTPClient.h>
-#include "Firmare.gen.h"
+#include "Firmware.h"
 #include "ScreenBase.h"
 
 char * NetworkHelper::READING_URL = nullptr;
@@ -47,15 +47,15 @@ void NetworkHelper::setupUrls(char * baseUrl, char * gatewayName, char * token) 
     Serial.println(STATUS_URL);
 }
 
-void NetworkHelper::setupWifi() {
-    wifiMulti.addAP(TEST_SSID, TEST_PASSWD);
+void NetworkHelper::setupWifi(char * ssid, char * password) {
+    wifiMulti.addAP(ssid, password);
     while (wifiMulti.run() != WL_CONNECTED) {
         delay(500);
         Serial.print(".");
     }
     Serial.print("[SETUP] Connected to WiFi network with IP address: ");
     Serial.println(WiFi.localIP());
-    Serial.println("[SETUP] Wifi: GO");
+    Serial.println("[SETUP] Wifi: OK");
 }
 
 void NetworkHelper::sendReading(const char * cardHash) {

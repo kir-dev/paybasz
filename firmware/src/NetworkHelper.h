@@ -24,7 +24,7 @@ private:
     static char * TOKEN;
 public:
     NetworkHelper() {}
-    void setupWifi();
+    void setupWifi(char * ssid, char * password);
 
     void sendReading(const char * cardHash);
     AccountBalance getAccountBalance(const char * cardHash);

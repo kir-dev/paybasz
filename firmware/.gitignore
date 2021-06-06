@@ -4,6 +4,6 @@ clipboard/
 cmake/
 cmake-build-debug/
 .idea/
-src/Firmare.gen.h
+src/Firmware.h
 clipboard/
 docs/notes.txt
