@@ -43,8 +43,10 @@ class PayAddItemScreen : public ScreenBase {
 private:
     uint32_t total;
     uint32_t current;
+    uint8_t cursor;
+    char item[10];
 public:
-    PayAddItemScreen() : total(0), current(0) {};
+    PayAddItemScreen() : total(0), current(0), cursor(0) {};
     void onActivate();
     void onKeyPressEvent(char key);
 };

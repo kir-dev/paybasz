@@ -101,56 +101,104 @@ void SleepScreen::onKeyPressEvent(char key) {
 void PayAddItemScreen::onActivate() {
     total = 0;
     current = 0;
+    cursor = 0;
+    for (int i = 0; i < 10; i++)
+        item[i] = 0;
     ScreenBase::displayManager->displayAddEntry(current, total);
 }
 
 void PayAddItemScreen::onKeyPressEvent(char key) {
-    bool changed = false;
-    if (current < 99999) {
-        switch (key) {
-            case '0': current *= 10; current += 0; changed = true; break;
-            case '1': current *= 10; current += 1; changed = true; break;
-            case '2': current *= 10; current += 2; changed = true; break;
-            case '3': current *= 10; current += 3; changed = true; break;
-            case '4': current *= 10; current += 4; changed = true; break;
-            case '5': current *= 10; current += 5; changed = true; break;
-            case '6': current *= 10; current += 6; changed = true; break;
-            case '7': current *= 10; current += 7; changed = true; break;
-            case '8': current *= 10; current += 8; changed = true; break;
-            case '9': current *= 10; current += 9; changed = true; break;
-            default: break;
-        }
-    }
-    switch (key) {
-        case 'R': {
-            if (current > 0) {
-                current /= 10;
-                changed = true;
+    if (cursor == 0) {
+        bool changed = false;
+        if (current < 99999) {
+            switch (key) {
+                case '0': current *= 10; current += 0; changed = true; break;
+                case '1': current *= 10; current += 1; changed = true; break;
+                case '2': current *= 10; current += 2; changed = true; break;
+                case '3': current *= 10; current += 3; changed = true; break;
+                case '4': current *= 10; current += 4; changed = true; break;
+                case '5': current *= 10; current += 5; changed = true; break;
+                case '6': current *= 10; current += 6; changed = true; break;
+                case '7': current *= 10; current += 7; changed = true; break;
+                case '8': current *= 10; current += 8; changed = true; break;
+                case '9': current *= 10; current += 9; changed = true; break;
+                default: break;
             }
-            break;
         }
-        case 'E': {
-            if (total != 0 && current == 0) {
-                paymentTotalAmount = total;
-                ScreenBase::setActiveScreen(PAYMENT_SCREEN_INSTANCE);
-                ScreenBase::displayManager->displayPaymentScreen(total);
+        switch (key) {
+            case 'L':
+            case 'R': {
+                if (current > 0) {
+                    current /= 10;
+                    changed = true;
+                }
+                break;
+            }
+            case 'E': {
+                if (total != 0 && current == 0) {
+                    paymentTotalAmount = total;
+                    ScreenBase::setActiveScreen(PAYMENT_SCREEN_INSTANCE);
+                    ScreenBase::displayManager->displayPaymentScreen(total);
+                } else {
+                    total += current;
+                    current = 0;
+                    changed = true;
+                }
+                break;
+            }
+            case 'X': {
+                ScreenBase::setActiveScreen(MENU_SCREEN_INSTANCE);
+                break;
+            }
+            case '#': {
+                item[0] = '#';
+                cursor = 1;
+                current = 0;
+                ScreenBase::displayManager->displayAddNamedItem(item, total);
+            }
+            default:
+                break;
+        }
+        if (changed) {
+            if (total > 999999)
+                total = 999999;
+            ScreenBase::displayManager->displayAddEntry(current, total);
+        }
+    } else {
+        if (key == 'L' || key == 'R') {
+            if (cursor > 0) {
+                if (current == 0) {
+                    cursor--;
+                    item[cursor] = '\0';
+                }
+                current = 0;
+
+                if (cursor == 0) {
+                    ScreenBase::displayManager->displayAddEntry(current, total);
+                } else {
+                    ScreenBase::displayManager->displayAddNamedItem(item, total);
+                }
+            }
+
+        } else if (key == 'X') {
+            ScreenBase::setActiveScreen(MENU_SCREEN_INSTANCE);
+
+        } else if (key == 'E') {
+            if (current == 0) {
+                ScreenBase::networkHelper->queryItem(item, &current);
             } else {
                 total += current;
                 current = 0;
-                changed = true;
+                for (int i = 0; i < 10; i++)
+                    item[i] = 0;
+                cursor = 0;
+                ScreenBase::displayManager->displayAddEntry(current, total);
             }
-            break;
+        } else if (cursor < 8 && key != 'G' && key != 'F' && key != 'U' && key != 'D') {
+            item[cursor] = key;
+            cursor++;
+            ScreenBase::displayManager->displayAddNamedItem(item, total);
         }
-        case 'X': {
-            ScreenBase::setActiveScreen(MENU_SCREEN_INSTANCE);
-            break;
-        }
-        default: break;
-    }
-    if (changed) {
-        if (total > 999999)
-            total = 999999;
-        ScreenBase::displayManager->displayAddEntry(current, total);
     }
 }
 
@@ -237,7 +285,7 @@ void CommandScreen::onKeyPressEvent(char key) {
         if (strcmp(command, "*100#") == 0) {
             ScreenBase::setActiveScreen(MENU_SCREEN_INSTANCE);
         } else if (strcmp(command, "*101#") == 0) {
-            ScreenBase::displayManager->displaySplashScreen();
+            ScreenBase::displayManager->displaySplashScreen(2);
             ScreenBase::setActiveScreen(INIT_SCREEN_INSTANCE);
         } else if (strcmp(command, "*102#") == 0) {
             ScreenBase::setActiveScreen(BALANCE_SCREEN_INSTANCE);

@@ -20,7 +20,7 @@
 #include "NetworkHelper.h"
 #include "PermanentMemory.h"
 #include "SetupMode.h"
-#include "Firmware.h" // FIXME: generate
+#include "Firmware.h"
 
 Keypad * keypad;
 DisplayManager * displayManager;
@@ -68,7 +68,7 @@ void setup() {
             PIN_SPI_MISO,
             PIN_DISPLAY_CS);
     displayManager->setupDisplay();
-    displayManager->displaySplashScreen();
+    displayManager->displaySplashScreen(0);
 
     // Keypad
     keypad = new Keypad(
@@ -108,11 +108,10 @@ void setup() {
         Serial.println("[SETUP] Entering SETUP configuration mode...");
         setupDualBeep();
         displayManager->displaySetupSplashScreen();
-        Serial.println("[SETUP] Connection info showed up!");
         setupModeSetup();
-
         return;
     }
+    displayManager->displaySplashScreen(1);
 
     Serial.println("[SETUP] Loaded config:");
     Serial.println("[SETUP] - SSID: " + String(permanentMemory->ssid));
@@ -127,6 +126,8 @@ void setup() {
             permanentMemory->baseUrl,
             permanentMemory->gatewayName,
             permanentMemory->token);
+
+    displayManager->displaySplashScreen(2);
 
     // Rfid
     rfidReader = new RfidReader(PIN_RFID_RST, PIN_RFID_CS, displayManager);

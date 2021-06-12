@@ -93,6 +93,102 @@ void DisplayManager::displayAddEntry(int actual, int total) {
     display->drawCanvas(0, 0, canvas);
 }
 
+void DisplayManager::displayAddNamedEntity(bool valid, char * item, int price) {
+    if (price > 99999)
+        price = 99999;
+
+    canvas.clear();
+    canvas.setFixedFont(ssd1306xled_font6x8);
+    if (valid) {
+        canvas.setColor(RGB_COLOR16(255, 0, 255));
+    } else {
+        canvas.setColor(RGB_COLOR16(255, 0, 0));
+    }
+    int itemLength = strlen(item);
+    if (itemLength > 12) {
+        if (itemLength > 24) {
+            item[24] = '\0';
+            itemLength = 24;
+        }
+        int start = (DISPLAY_WIDTH - ((itemLength - 12) * 6)) / 2;
+        canvas.printFixed(start, 29, item + 12, STYLE_NORMAL);
+        item[12] = '\0';
+        itemLength = 12;
+    }
+    int start = (DISPLAY_WIDTH - (itemLength * 6)) / 2;
+    canvas.printFixed(start, 21, item, STYLE_NORMAL);
+
+    canvas.setColor(RGB_COLOR16(255, 255, 255));
+    canvas.printFixed(30, 4, "TERMEK", STYLE_NORMAL);
+    canvas.putPixel(57, 2);
+    canvas.putPixel(58, 1);
+    canvas.printFixed(66, 55, "[ENT]", STYLE_NORMAL);
+
+    if (valid) {
+        canvas.setColor(RGB_COLOR16(127, 0, 127));
+    } else {
+        canvas.setColor(RGB_COLOR16(127, 0, 0));
+    }
+    canvas.printFixed(2, 55, "[<]", STYLE_NORMAL);
+
+    if (valid) {
+        canvas.setColor(RGB_COLOR16(255, 0, 255));
+    } else {
+        canvas.setColor(RGB_COLOR16(255, 0, 0));
+    }
+
+    canvas.fillRect(0, 16, 1, 49);
+    canvas.fillRect(94, 16, 95, 49);
+    canvas.fillRect(0, 16, 95, 17);
+    canvas.fillRect(0, 49, 95, 50);
+
+    if (valid) {
+        canvas.setColor(RGB_COLOR16(255, 255, 255));
+        char priceStr[11];
+        sprintf(priceStr, "+%d JMF", price);
+        canvas.printFixed((DISPLAY_WIDTH - (strlen(priceStr) * 6)) / 2, 38, priceStr, STYLE_NORMAL);
+    }
+    display->drawCanvas(0, 0, canvas);
+}
+
+void DisplayManager::displayAddNamedItem(char * item, int total) {
+    canvas.clear();
+    canvas.setFixedFont(courier_new_font11x16_digits);
+    canvas.setColor(RGB_COLOR16(255, 0, 255));
+    const String amountStr = String(item);
+    const int amountLength = amountStr.length();
+    int start = (DISPLAY_WIDTH - (amountLength * 12)) / 2 + 3;
+    for (int i = amountLength - 1; i >= 0; i--) {
+        const char digit[2] = {amountStr[amountLength - i - 1], '\0'};
+        if (digit[0] == '*')
+            canvas.setColor(RGB_COLOR16(127, 0, 127));
+        canvas.printFixed(start, 21, digit, STYLE_NORMAL);
+        start += 12;
+    }
+
+    canvas.setFixedFont(ssd1306xled_font6x8);
+    canvas.setColor(RGB_COLOR16(255, 255, 255));
+    canvas.printFixed(27, 4, "FIZETES", STYLE_NORMAL);
+    canvas.putPixel(60, 2);
+    canvas.putPixel(61, 1);
+    canvas.printFixed(54, 55, "[2xENT]", STYLE_NORMAL);
+
+    canvas.setColor(RGB_COLOR16(128, 0, 128));
+    canvas.printFixed(2, 55, "=", STYLE_NORMAL);
+    canvas.printFixed(9, 55, String(total).c_str(), STYLE_NORMAL);
+
+    canvas.setColor(RGB_COLOR16(255, 0, 255));
+    canvas.fillRect(0, 16, 1, 49);
+    canvas.fillRect(94, 16, 95, 49);
+    canvas.fillRect(0, 16, 95, 17);
+    canvas.fillRect(0, 49, 95, 50);
+
+    canvas.putPixel(57, 36);
+    canvas.putPixel(58, 35);
+    canvas.printFixed(18, 38, "[ TERMEK ]", STYLE_NORMAL);
+    display->drawCanvas(0, 0, canvas);
+}
+
 void DisplayManager::displayLoadingScreen(int state) {
     canvas.setColor(RGB_COLOR16(0, 0, 0));
     canvas.fillRect(2, 2, 93, 52);
@@ -307,11 +403,17 @@ void DisplayManager::displayCardAmountScreen(int amount, bool loan, bool allow) 
     display->drawCanvas(0, 0, canvas);
 }
 
-void DisplayManager::displaySplashScreen() {
+void DisplayManager::displaySplashScreen(int mode) {
     canvas.clear();
     canvas.setColor(RGB_COLOR16(255, 255, 255));
     canvas.drawBitmap1(0, 0, 96, 64, bannerWhiteParts);
-    canvas.setColor(RGB_COLOR16(0, 255, 0));
+    if (mode == 0) {
+        canvas.setColor(RGB_COLOR16(63, 63, 63));
+    } else if (mode == 1) {
+        canvas.setColor(RGB_COLOR16(255, 255, 0));
+    } else {
+        canvas.setColor(RGB_COLOR16(0, 255, 0));
+    }
     canvas.drawBitmap1(36, 36, 56, 24, bannerGreenParts);
     display->drawCanvas(0, 0, canvas);
 }

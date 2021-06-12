@@ -25,6 +25,8 @@ public:
     void setupDisplay();
     void displayPaymentScreen(int amount);
     void displayAddEntry(int actual, int total);
+    void displayAddNamedEntity(bool valid, char * item, int price);
+    void displayAddNamedItem(char * item, int total);
     void displayLoadingScreen(int state);
     void displayCommandScreen(char * command, int length);
     void displayDoneStatus();
@@ -33,7 +35,7 @@ public:
     void displayReadingScreen(const char* hashedTag);
     void displayReadCardAmountScreen();
     void displayCardAmountScreen(int amount, bool loan, bool allow);
-    void displaySplashScreen();
+    void displaySplashScreen(int mode);
     void displaySetupSplashScreen();
     void displayMenu();
     void displayEmpty();

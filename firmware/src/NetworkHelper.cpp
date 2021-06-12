@@ -9,6 +9,7 @@ char * NetworkHelper::READING_URL = nullptr;
 char * NetworkHelper::ACCOUNT_URL = nullptr;
 char * NetworkHelper::PAYMENT_URL = nullptr;
 char * NetworkHelper::VALIDATE_URL = nullptr;
+char * NetworkHelper::QUERY_URL = nullptr;
 char * NetworkHelper::STATUS_URL = nullptr;
 char * NetworkHelper::TOKEN = nullptr;
 
@@ -16,6 +17,8 @@ void NetworkHelper::setupUrls(char * baseUrl, char * gatewayName, char * token) 
     int baseLength = strlen(baseUrl);
     int gatewayLength = strlen(gatewayName);
     NetworkHelper::TOKEN = token;
+
+    Serial.println("[API] API URLS:");
 
     READING_URL = new char[baseLength + 9 + gatewayLength + 1];
     strcpy(READING_URL, baseUrl);
@@ -40,6 +43,12 @@ void NetworkHelper::setupUrls(char * baseUrl, char * gatewayName, char * token) 
     strcpy(VALIDATE_URL + baseLength, "/validate/");
     strcpy(VALIDATE_URL + baseLength + 10, gatewayName);
     Serial.println(VALIDATE_URL);
+
+    QUERY_URL = new char[baseLength + 7 + gatewayLength + 1];
+    strcpy(QUERY_URL, baseUrl);
+    strcpy(QUERY_URL + baseLength, "/query/");
+    strcpy(QUERY_URL + baseLength + 7, gatewayName);
+    Serial.println(QUERY_URL);
 
     STATUS_URL = new char[baseLength + 6 + 1];
     strcpy(STATUS_URL, baseUrl);
@@ -209,3 +218,57 @@ void NetworkHelper::proceedPayment(const char * cardHash, uint32_t amount) {
     }
 
 }
+
+void NetworkHelper::queryItem(const char * item, uint32_t * price) {
+    Serial.print("[API] Querying item: ");
+    Serial.println(item);
+
+    for (int i = 0; i < 25; ++i) {
+        if (wifiMulti.run() == WL_CONNECTED) {
+            HTTPClient http;
+            http.begin(QUERY_URL);
+            http.addHeader("Content-Type", "application/json");
+            char message[29 + 10 + 64 + 1];
+            sprintf(message, "{\"query\":\"%s\",\"gatewayCode\":\"%s\"}", item, NetworkHelper::TOKEN);
+            int httpResponseCode = http.POST(message);
+
+            Serial.print("[API] HTTP Response code: ");
+            Serial.println(httpResponseCode);
+
+            if (httpResponseCode == HTTP_CODE_OK) {
+                Serial.print("[API] OK; payload: ");
+                String payload = http.getString();
+                Serial.println(payload);
+
+                if (payload.startsWith("1;")) {
+                    char name[32];
+                    int secondSemicolon = payload.lastIndexOf(';');
+                    memcpy(name, payload.c_str() + 2, secondSemicolon - 2);
+                    name[secondSemicolon - 2] = '\0';
+                    *price = payload.substring(secondSemicolon + 1).toInt();
+                    ScreenBase::displayManager->displayAddNaedEntity(true, name, *price);
+
+                } else {
+                    *price = 0;
+                    ScreenBase::displayManager->displayAddNamedEntity(false, "NINCS ILYEN", 0);
+                }
+
+            } else if (httpResponseCode < 0) {
+                delay(400);
+                http.end();
+                continue;
+            } else {
+                ScreenBase::displayManager->displayAddNamedEntity(false, "KOMM. HIBA", 0);
+            }
+
+            http.end();
+            return;
+        } else {
+            Serial.println("[API] WiFi Disconnected, retrying");
+            delay(400);
+        }
+    }
+
+}
+
+

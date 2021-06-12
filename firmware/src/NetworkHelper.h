@@ -20,6 +20,7 @@ private:
     static char * ACCOUNT_URL;
     static char * PAYMENT_URL;
     static char * VALIDATE_URL;
+    static char * QUERY_URL;
     static char * STATUS_URL;
     static char * TOKEN;
 public:
@@ -29,6 +30,7 @@ public:
     void sendReading(const char * cardHash);
     AccountBalance getAccountBalance(const char * cardHash);
     void proceedPayment(const char * cardHash, uint32_t amount);
+    void queryItem(const char * item, uint32_t * price);
 
     static void setupUrls(char * baseUrl, char * gatewayName, char * token);
 };

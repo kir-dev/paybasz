@@ -41,6 +41,6 @@ constexpr int32_t PIN_BUZZER = 18;
 
 constexpr int32_t DEBUG_WAIT_MS = 3000;
 constexpr int32_t BUZZER_CHANNEL = 1;
-constexpr int32_t BUZZER_SOUND_HZ = 2300;
+constexpr int32_t BUZZER_SOUND_HZ = 2800; // 2300
 
 #endif //PAYBASZ_BOARDPINS_H
