@@ -104,6 +104,7 @@ void PayAddItemScreen::onActivate() {
     cursor = 0;
     for (int i = 0; i < 10; i++)
         item[i] = 0;
+    memset(comment, '\0', 255);
     ScreenBase::displayManager->displayAddEntry(current, total);
 }
 
@@ -141,6 +142,8 @@ void PayAddItemScreen::onKeyPressEvent(char key) {
                     ScreenBase::displayManager->displayPaymentScreen(total);
                 } else {
                     total += current;
+                    if (strlen(comment) < 245)
+                        sprintf(comment, "%s,%d", comment, current);
                     current = 0;
                     changed = true;
                 }
@@ -188,6 +191,8 @@ void PayAddItemScreen::onKeyPressEvent(char key) {
                 ScreenBase::networkHelper->queryItem(item, &current);
             } else {
                 total += current;
+                if (strlen(comment) < 245)
+                    sprintf(comment, "%s,%s", comment, item);
                 current = 0;
                 for (int i = 0; i < 10; i++)
                     item[i] = 0;
@@ -214,7 +219,7 @@ bool PaymentScreen::getOrientation() {
 void PaymentScreen::paymentTask(const char* card) {
     piezoBeepStart();
     piezoBeepEnd();
-    ScreenBase::networkHelper->proceedPayment(card, paymentTotalAmount);
+    ScreenBase::networkHelper->proceedPayment(card, paymentTotalAmount, comment);
     ScreenBase::setActiveScreen(REVERSE_NO_CHANGE_SCREEN_INSTANCE);
 }
 

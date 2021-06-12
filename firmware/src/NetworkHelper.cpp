@@ -158,11 +158,14 @@ AccountBalance NetworkHelper::getAccountBalance(const char * cardHash) {
     return result;
 }
 
-void NetworkHelper::proceedPayment(const char * cardHash, uint32_t amount) {
-    Serial.print("[API] Sending payment: ");
+void NetworkHelper::proceedPayment(const char * cardHash, uint32_t amount, char * comment) {
+    Serial.println("[API] Sending payment: ");
     Serial.print(cardHash);
-    Serial.print(" wit amount: ");
+    Serial.print("      - with amount: ");
     Serial.println(amount);
+    Serial.print("[API] Comment: ");
+    comment += 1;
+    Serial.println(comment);
 
     for (int i = 0; i < 25; ++i) {
         if (i != 0)
@@ -172,9 +175,9 @@ void NetworkHelper::proceedPayment(const char * cardHash, uint32_t amount) {
             HTTPClient http;
             http.begin(PAYMENT_URL);
             http.addHeader("Content-Type", "application/json");
-            char message[64 + 64 + 28 + 16 + 1];
-            sprintf(message, "{\"card\":\"%s\",\"amount\":%d,\"gatewayCode\":\"%s\"}",
-                    cardHash, amount, NetworkHelper::TOKEN);
+            char message[51 + 64 + 64 + 16 + strlen(comment) + 1];
+            sprintf(message, "{\"card\":\"%s\",\"amount\":%d,\"gatewayCode\":\"%s\",\"details\":\"%s\"}",
+                    cardHash, amount, NetworkHelper::TOKEN, comment);
             int httpResponseCode = http.POST(message);
 
             Serial.print("[API] HTTP Response code: ");
@@ -246,7 +249,7 @@ void NetworkHelper::queryItem(const char * item, uint32_t * price) {
                     memcpy(name, payload.c_str() + 2, secondSemicolon - 2);
                     name[secondSemicolon - 2] = '\0';
                     *price = payload.substring(secondSemicolon + 1).toInt();
-                    ScreenBase::displayManager->displayAddNaedEntity(true, name, *price);
+                    ScreenBase::displayManager->displayAddNamedEntity(true, name, *price);
 
                 } else {
                     *price = 0;

@@ -4,6 +4,7 @@
 #include "ScreenBase.h"
 
 static uint32_t paymentTotalAmount = 0;
+static char comment[255];
 
 class InitScreen : public ScreenBase {
 private:
