@@ -110,6 +110,11 @@ public:
     void onDeactivate();
 };
 
+class RebootNowScreen : public ScreenBase {
+public:
+    void onActivate();
+};
+
 static InitScreen * INIT_SCREEN_INSTANCE = new InitScreen();
 static MenuScreen * MENU_SCREEN_INSTANCE = new MenuScreen();
 static ReadingScreen * READING_SCREEN_INSTANCE = new ReadingScreen();
@@ -123,5 +128,6 @@ static ReverseNoChangeBackToMenuScreen * REVERSE_NO_CHANGE_SCREEN_INSTANCE = new
 static CommandScreen * COMMAND_SCREEN_INSTANCE = new CommandScreen();
 static BalanceScreen * BALANCE_SCREEN_INSTANCE = new BalanceScreen();
 static BeepScreen * BEEP_SCREEN_INSTANCE = new BeepScreen();
+static RebootNowScreen * REBOOT_NOW_SCREEN = new RebootNowScreen();
 
 #endif //PAYBASZ_SCREENS_H

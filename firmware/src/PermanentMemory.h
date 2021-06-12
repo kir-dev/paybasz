@@ -7,7 +7,7 @@ class PermanentMemory {
 private:
     inline void fillEmpty(char * var, unsigned int length);
 public:
-    static constexpr unsigned int STATUS_LENGTH = 1;
+    static constexpr unsigned int STATE_LENGTH = 1;
     static constexpr unsigned int PIN_LENGTH = 8 + 1;
     static constexpr unsigned int SSID_LENGTH = 32 + 1;
     static constexpr unsigned int WPASSWD_LENGTH = 63 + 1;
@@ -23,21 +23,14 @@ public:
     char token[TOKEN_LENGTH];
     char baseUrl[BASE_URL_LENGTH];
 
-    PermanentMemory() {
-        fillEmpty(state, STATE_LENGTH);
-        fillEmpty(pinCode, PIN_LENGTH);
-        fillEmpty(ssid, SSID_LENGTH);
-        fillEmpty(wifiPassword, WPASSWD_LENGTH);
-        fillEmpty(gatewayName, GW_NAME_LENGTH);
-        fillEmpty(token, TOKEN_LENGTH);
-        fillEmpty(baseUrl, BASE_URL_LENGTH);
-    }
+    PermanentMemory();
 
     bool isLocked();
     bool isSetup();
     void setSetup(bool value);
     void save();
     void load();
+    void factoryReset();
 };
 
 #endif //PAYBASZ_PERMANENTMEMORY_H

@@ -17,8 +17,6 @@ void InitScreen::onActivate() {
 void InitScreen::onKeyPressEvent(char key) {
     if (key == 'E') {
         ScreenBase::setActiveScreen(MENU_SCREEN_INSTANCE);
-    } else if (key == 'U') {
-        // TODO: setup
     }
 }
 
@@ -262,9 +260,12 @@ void CommandScreen::onKeyPressEvent(char key) {
         } else if (strcmp(command, "*7003#") == 0) {
             // 0 jmf transaction FIXME-5
         } else if (strcmp(command, "*707172#") == 0) {
-            // TODO: Setup mode
+            ScreenBase::permanentMemory->setSetup(true);
+            ScreenBase::permanentMemory->save();
+            ScreenBase::setActiveScreen(REBOOT_NOW_SCREEN);
         } else if (strcmp(command, "*909192#") == 0) {
-            // TODO: Factory reset
+            ScreenBase::permanentMemory->factoryReset();
+            ScreenBase::setActiveScreen(REBOOT_NOW_SCREEN);
         } else if (strcmp(command, "*69#") == 0) {
             // Easter egg
         } else if (strcmp(command, "*911#") == 0) {
@@ -330,12 +331,13 @@ void BalanceScreen::onKeyPressEvent(char key) {
     }
 }
 
-void BeepScreen::onActivate() {
-//    piezoBeepStart();
-//    piezoBeepEnd();
+bool BalanceScreen::getOrientation() {
+    return false;
+}
 
+void BeepScreen::onActivate() {
     for (int i = 100; i < 450; i += 50) {
-        ledcWrite(BUZZER_CHANNEL, 230);
+        ledcWrite(BUZZER_CHANNEL, i);
         delay(350);
         ledcWrite(BUZZER_CHANNEL, 0);
         delay(1000);
@@ -347,6 +349,7 @@ void BeepScreen::onActivate() {
 void BeepScreen::onDeactivate() {
 }
 
-bool BalanceScreen::getOrientation() {
-    return false;
+
+void RebootNowScreen::onActivate() {
+    ScreenBase::displayManager->displayRebootNowScreen();
 }

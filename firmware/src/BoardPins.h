@@ -39,7 +39,7 @@ constexpr int32_t PIN_BUZZER = 18;
 
 /// OTHER CONFIG
 
-constexpr int32_t DEBUG_WAIT_MS = 1000;
+constexpr int32_t DEBUG_WAIT_MS = 3000;
 constexpr int32_t BUZZER_CHANNEL = 1;
 constexpr int32_t BUZZER_SOUND_HZ = 2300;
 

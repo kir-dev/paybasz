@@ -34,8 +34,10 @@ public:
     void displayReadCardAmountScreen();
     void displayCardAmountScreen(int amount, bool loan, bool allow);
     void displaySplashScreen();
+    void displaySetupSplashScreen();
     void displayMenu();
     void displayEmpty();
+    void displayRebootNowScreen();
     void updateSyncFlag();
     void updateErrorFlag(char * message);
     void updateConnFlag();

@@ -6,49 +6,69 @@ void PermanentMemory::fillEmpty(char * var, unsigned int length) {
         var[i] = 0;
 }
 
+PermanentMemory::PermanentMemory() {
+    this->state = 'X';
+    this->fillEmpty(this->pinCode, PIN_LENGTH);
+    this->fillEmpty(this->ssid, SSID_LENGTH);
+    this->fillEmpty(this->wifiPassword, WPASSWD_LENGTH);
+    this->fillEmpty(this->gatewayName, GW_NAME_LENGTH);
+    this->fillEmpty(this->token, TOKEN_LENGTH);
+    this->fillEmpty(this->baseUrl, BASE_URL_LENGTH);
+}
+
 bool PermanentMemory::isLocked() {
-    return this->state & 0b01;
+    return false;
 }
 
 bool PermanentMemory::isSetup() {
-    return (this->state & 0b10) >> 1;
+    return this->state == 'T';
 }
 
-void setSetup(bool value) {
-    if (value) {
-        this->state |= 0b10;
-    } else {
-        this->state &= (~0b10);
+void PermanentMemory::setSetup(bool value) {
+    this->state = value ? 'T' : 'F';
+}
+
+void writeToEeprom(char * data, unsigned int from, unsigned int length) {
+    for (int i = 0; i < length; ++i) {
+        EEPROM.write(from + i, data[i]);
     }
 }
 
 void PermanentMemory::save() {
-    EEPROM.write(0, status);
-    writeToEeprom(pin, STATUS_LENGTH, PIN_LENGTH);
-    writeToEeprom(ssid, STATUS_LENGTH + PIN_LENGTH, SSID_LENGTH);
-    writeToEeprom(wifiPassword, STATUS_LENGTH + PIN_LENGTH + SSID_LENGTH, WPASSWD_LENGTH);
-    writeToEeprom(gatewayName, STATUS_LENGTH + PIN_LENGTH + SSID_LENGTH + WPASSWD_LENGTH, GW_NAME_LENGTH);
-    writeToEeprom(token, STATUS_LENGTH + PIN_LENGTH + SSID_LENGTH + WPASSWD_LENGTH + GW_NAME_LENGTH, TOKEN_LENGTH);
-    writeToEeprom(baseUrl, STATUS_LENGTH + PIN_LENGTH + SSID_LENGTH + WPASSWD_LENGTH + GW_NAME_LENGTH + TOKEN_LENGTH, BASE_URL_LENGTH);
+    EEPROM.write(0, this->state);
+    writeToEeprom(this->pinCode, STATE_LENGTH, PIN_LENGTH);
+    writeToEeprom(this->ssid, STATE_LENGTH + PIN_LENGTH, SSID_LENGTH);
+    writeToEeprom(this->wifiPassword, STATE_LENGTH + PIN_LENGTH + SSID_LENGTH, WPASSWD_LENGTH);
+    writeToEeprom(this->gatewayName, STATE_LENGTH + PIN_LENGTH + SSID_LENGTH + WPASSWD_LENGTH, GW_NAME_LENGTH);
+    writeToEeprom(this->token, STATE_LENGTH + PIN_LENGTH + SSID_LENGTH + WPASSWD_LENGTH + GW_NAME_LENGTH, TOKEN_LENGTH);
+    writeToEeprom(this->baseUrl, STATE_LENGTH + PIN_LENGTH + SSID_LENGTH + WPASSWD_LENGTH + GW_NAME_LENGTH + TOKEN_LENGTH, BASE_URL_LENGTH);
     EEPROM.commit();
-}
-
-void writeToEeprom(char * data, unsigned int from, unsigned int length) {
-    for (int i = 0; i < length; ++i)
-        EEPROM.write(from + i, data[i]);
-}
-
-void PermanentMemory::load() {
-    status = EEPROM.read(0);
-    loadFromEeprom(pin, STATUS_LENGTH, PIN_LENGTH);
-    loadFromEeprom(ssid, STATUS_LENGTH + PIN_LENGTH, SSID_LENGTH);
-    loadFromEeprom(wifiPassword, STATUS_LENGTH + PIN_LENGTH + SSID_LENGTH, WPASSWD_LENGTH);
-    loadFromEeprom(gatewayName, STATUS_LENGTH + PIN_LENGTH + SSID_LENGTH + WPASSWD_LENGTH, GW_NAME_LENGTH);
-    loadFromEeprom(token, STATUS_LENGTH + PIN_LENGTH + SSID_LENGTH + WPASSWD_LENGTH + GW_NAME_LENGTH, TOKEN_LENGTH);
-    loadFromEeprom(baseUrl, STATUS_LENGTH + PIN_LENGTH + SSID_LENGTH + WPASSWD_LENGTH + GW_NAME_LENGTH + TOKEN_LENGTH, BASE_URL_LENGTH);
+    Serial.println("[EEPROM] Saved");
 }
 
 void loadFromEeprom(char * data, unsigned int from, unsigned int length) {
-    for (int i = 0; i < length; ++i)
+    for (int i = 0; i < length; ++i) {
         data[i] = EEPROM.read(from + i);
+    }
+}
+
+void PermanentMemory::load() {
+    this->state = EEPROM.read(0);
+    loadFromEeprom(this->pinCode, STATE_LENGTH, PIN_LENGTH);
+    loadFromEeprom(this->ssid, STATE_LENGTH + PIN_LENGTH, SSID_LENGTH);
+    loadFromEeprom(this->wifiPassword, STATE_LENGTH + PIN_LENGTH + SSID_LENGTH, WPASSWD_LENGTH);
+    loadFromEeprom(this->gatewayName, STATE_LENGTH + PIN_LENGTH + SSID_LENGTH + WPASSWD_LENGTH, GW_NAME_LENGTH);
+    loadFromEeprom(this->token, STATE_LENGTH + PIN_LENGTH + SSID_LENGTH + WPASSWD_LENGTH + GW_NAME_LENGTH, TOKEN_LENGTH);
+    loadFromEeprom(this->baseUrl, STATE_LENGTH + PIN_LENGTH + SSID_LENGTH + WPASSWD_LENGTH + GW_NAME_LENGTH + TOKEN_LENGTH, BASE_URL_LENGTH);
+}
+
+void PermanentMemory::factoryReset() {
+    this->fillEmpty(this->pinCode, PIN_LENGTH);
+    this->fillEmpty(this->ssid, SSID_LENGTH);
+    this->fillEmpty(this->wifiPassword, WPASSWD_LENGTH);
+    this->fillEmpty(this->gatewayName, GW_NAME_LENGTH);
+    this->fillEmpty(this->token, TOKEN_LENGTH);
+    this->fillEmpty(this->baseUrl, BASE_URL_LENGTH);
+    this->setSetup(true);
+    this->save();
 }

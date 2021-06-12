@@ -7,6 +7,7 @@
 #include <WiFi.h>
 #include <WiFiMulti.h>
 #include <HTTPClient.h>
+#include <EEPROM.h>
 
 #include "esp_log.h"
 #include "Keypad.h"
@@ -29,12 +30,34 @@ PermanentMemory * permanentMemory;
 
 bool setupMode = false;
 
+void bootBeep() {
+    ledcWrite(BUZZER_CHANNEL, 240);
+    delay(350);
+    ledcWrite(BUZZER_CHANNEL, 0);
+    delay(1000);
+}
+
+void setupDualBeep() {
+    ledcWrite(BUZZER_CHANNEL, 240);
+    delay(200);
+    ledcWrite(BUZZER_CHANNEL, 0);
+    delay(200);
+    ledcWrite(BUZZER_CHANNEL, 240);
+    delay(200);
+    ledcWrite(BUZZER_CHANNEL, 0);
+    delay(1000);
+}
+
 void enterSetupModeManually(char key) {
-    setupMode = (key == '*');
+    if (key == '*')
+        setupMode = true;
 }
 
 void setup() {
     Serial.begin(115200);
+
+    // EEPROM
+    EEPROM.begin(512);
 
     // Display
     displayManager = new DisplayManager(
@@ -60,12 +83,20 @@ void setup() {
             PIN_KEYPAD_ROW_5);
     keypad->setupKeypad();
     keypad->handleKeypad(esp_log_timestamp());
-    keypad->setKeyPressListener(enterSetupModeManually)
+    keypad->setKeyPressListener(enterSetupModeManually);
+
+    // Piezo Buzzer
+    ledcSetup(BUZZER_CHANNEL, BUZZER_SOUND_HZ, 8);
+    ledcAttachPin(PIN_BUZZER, BUZZER_CHANNEL);
+
+    bootBeep();
 
     // Serial
     while (!Serial);
     delay(DEBUG_WAIT_MS);
     Serial.println("[SETUP] Starting: paybasz");
+    keypad->handleKeypad(esp_log_timestamp());
+    delay(1000);
     keypad->handleKeypad(esp_log_timestamp());
 
     // Permanent memory
@@ -73,14 +104,18 @@ void setup() {
     permanentMemory->load();
 
     if (setupMode || permanentMemory->isSetup()) {
+        setupMode = true;
         Serial.println("[SETUP] Entering SETUP configuration mode...");
+        setupDualBeep();
+        displayManager->displaySetupSplashScreen();
+        Serial.println("[SETUP] Connection info showed up!");
         setupModeSetup();
+
         return;
     }
 
     Serial.println("[SETUP] Loaded config:");
     Serial.println("[SETUP] - SSID: " + String(permanentMemory->ssid));
-    Serial.println("[SETUP] - PW: " + String(permanentMemory->wifiPassword)); // FIXME: don't print after tested
     Serial.println("[SETUP] - NAME: " + String(permanentMemory->gatewayName));
     Serial.println("[SETUP] - TOKEN: " + String(permanentMemory->token));
     Serial.println("[SETUP] - BASE URL: " + String(permanentMemory->baseUrl));
@@ -99,14 +134,10 @@ void setup() {
     Serial.println("[SETUP] RFID: OK");
 
     // Screens
-    ScreenBase::setupScreen(keypad, displayManager, rfidReader, networkHelper);
+    ScreenBase::setupScreen(keypad, displayManager, rfidReader, networkHelper, permanentMemory);
     keypad->setKeyPressListener(ScreenBase::handleKeyEvents);
     ScreenBase::setActiveScreen(INIT_SCREEN_INSTANCE);
     Serial.println("[SETUP] Screens: OK");
-
-    // Piezo Buzzer
-    ledcSetup(BUZZER_CHANNEL, BUZZER_SOUND_HZ, 8);
-    ledcAttachPin(PIN_BUZZER, BUZZER_CHANNEL);
 
     // Other
     Serial.println("[SETUP] Setup completed");
@@ -114,12 +145,12 @@ void setup() {
 }
 
 void loop() {
-    if (setupMode) {
-        setupModeLoop();
-        return;
-    }
-
     try {
+        if (setupMode) {
+            setupModeLoop();
+            return;
+        }
+
         delay(10);
         unsigned long millis = esp_log_timestamp();
         ScreenBase::getActiveScreen()->onIdle();

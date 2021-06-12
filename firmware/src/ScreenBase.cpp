@@ -11,6 +11,7 @@ extern Keypad * ScreenBase::keypad;
 extern DisplayManager * ScreenBase::displayManager;
 extern RfidReader * ScreenBase::rfidReader;
 extern NetworkHelper * ScreenBase::networkHelper;
+extern PermanentMemory * ScreenBase::permanentMemory;
 
 ScreenBase * ScreenBase::getActiveScreen() {
     return activeScreen;
@@ -30,11 +31,12 @@ void ScreenBase::setActiveScreen(ScreenBase * newScreen) {
     activeScreen->onActivate();
 }
 
-void ScreenBase::setupScreen(Keypad * keypad, DisplayManager * displayManager, RfidReader * rfidReader, NetworkHelper * networkHelper) {
+void ScreenBase::setupScreen(Keypad * keypad, DisplayManager * displayManager, RfidReader * rfidReader, NetworkHelper * networkHelper, PermanentMemory * permanentMemory) {
     ScreenBase::keypad = keypad;
     ScreenBase::displayManager = displayManager;
     ScreenBase::rfidReader = rfidReader;
     ScreenBase::networkHelper = networkHelper;
+    ScreenBase::permanentMemory = permanentMemory;
 }
 
 void ScreenBase::handleKeyEvents(char key) {

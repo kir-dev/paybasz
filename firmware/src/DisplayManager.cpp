@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "ArduinoSpi3.h"
 #include "Branding.h"
+#include "Firmware.h"
 
 constexpr int DISPLAY_WIDTH = 96;
 
@@ -315,6 +316,19 @@ void DisplayManager::displaySplashScreen() {
     display->drawCanvas(0, 0, canvas);
 }
 
+void DisplayManager::displaySetupSplashScreen() {
+    canvas.clear();
+    canvas.setFixedFont(ssd1306xled_font6x8);
+    canvas.setColor(RGB_COLOR16(255, 255, 0));
+    canvas.printFixed(27, 17, "[SETUP]", STYLE_NORMAL);
+    canvas.setColor(RGB_COLOR16(255, 255, 255));
+    canvas.printFixed(4, 25, setupSsid, STYLE_NORMAL);
+    canvas.printFixed(4, 34, setupPassword, STYLE_NORMAL);
+    canvas.setColor(RGB_COLOR16(128, 128, 0));
+    canvas.printFixed(4, 43, "192.168.0.1", STYLE_NORMAL);
+    display->drawCanvas(0, 0, canvas);
+}
+
 void DisplayManager::displayMenu() {
     canvas.clear();
     canvas.setFixedFont(ssd1306xled_font6x8);
@@ -340,12 +354,21 @@ void DisplayManager::displayEmpty() {
     display->clear();
 }
 
+void DisplayManager::displayRebootNowScreen() {
+        canvas.clear();
+        canvas.setFixedFont(ssd1306xled_font6x8);
+        canvas.setColor(RGB_COLOR16(255, 0, 0));
+        canvas.drawRect(0, 0, 95, 63);
+        canvas.drawRect(1, 1, 94, 62);
+
+        canvas.setColor(RGB_COLOR16(255, 255, 255));
+        canvas.printFixed(18, 28, "REBOOT NOW", STYLE_NORMAL);
+        display->drawCanvas(0, 0, canvas);
+};
+
 void DisplayManager::updateSyncFlag() {
-    Serial.println("DEB a1.1");
     display->setColor(RGB_COLOR16(0, 128, 0));
-    Serial.println("DEB a1.2");
     display->printFixed(68, 4, "SYNC", STYLE_NORMAL);
-    Serial.println("DEB a1.3");
 }
 
 void DisplayManager::updateConnFlag() {

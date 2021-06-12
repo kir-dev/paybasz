@@ -16,7 +16,7 @@ build: compile
 	@echo "[#] UPLOADED"
 
 serial:
-	minicom
+	minicom -b 115200
 
 status:
 	~/arduino/bin/arduino-cli board list
