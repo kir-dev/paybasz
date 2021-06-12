@@ -28,8 +28,13 @@ constexpr uint8_t PIN_KEYPAD_COL_1 = 23;
 constexpr uint8_t PIN_KEYPAD_COL_2 = 22;
 constexpr uint8_t PIN_KEYPAD_COL_3 = 21;
 constexpr uint8_t PIN_KEYPAD_COL_4 = 19;
+#if DEVICE_VERSION == 20
 constexpr uint8_t PIN_KEYPAD_ROW_1 = 35;
 constexpr uint8_t PIN_KEYPAD_ROW_2 = 26;
+#elif DEVICE_VERSION == 30
+constexpr uint8_t PIN_KEYPAD_ROW_1 = 26;
+constexpr uint8_t PIN_KEYPAD_ROW_2 = 35;
+#endif
 constexpr uint8_t PIN_KEYPAD_ROW_3 = 36;
 constexpr uint8_t PIN_KEYPAD_ROW_4 = 39;
 constexpr uint8_t PIN_KEYPAD_ROW_5 = 34;

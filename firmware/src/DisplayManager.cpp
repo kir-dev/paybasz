@@ -427,7 +427,7 @@ void DisplayManager::displaySetupSplashScreen() {
     canvas.printFixed(4, 25, setupSsid, STYLE_NORMAL);
     canvas.printFixed(4, 34, setupPassword, STYLE_NORMAL);
     canvas.setColor(RGB_COLOR16(128, 128, 0));
-    canvas.printFixed(4, 43, "192.168.0.1", STYLE_NORMAL);
+    canvas.printFixed(4, 43, "192.168.0.69", STYLE_NORMAL);
     display->drawCanvas(0, 0, canvas);
 }
 

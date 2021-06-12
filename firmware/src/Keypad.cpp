@@ -45,10 +45,14 @@ void Keypad::handleKeypad(unsigned long millis) {
                 lastKeypadTimes[r][c] = millis;
 
                 if (read == LOW) {
-                    //Serial.printf("BUTTON D %c\r\n", Keypad::KEYPAD_SIGNS[r][c]);
+#ifdef DEBUG_KEYBOARD
+                    Serial.printf("BUTTON D %c\r\n", Keypad::KEYPAD_SIGNS[r][c]);
+#endif
                     keyPressed(Keypad::KEYPAD_SIGNS[r][c]);
                 } else {
-                    //Serial.printf("BUTTON U %c\r\n", Keypad::KEYPAD_SIGNS[r][c]);
+#ifdef DEBUG_KEYBOARD
+                    Serial.printf("BUTTON U %c\r\n", Keypad::KEYPAD_SIGNS[r][c]);
+#endif
                 }
             }
         }

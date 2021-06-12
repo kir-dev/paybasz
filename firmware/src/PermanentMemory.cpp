@@ -21,7 +21,7 @@ bool PermanentMemory::isLocked() {
 }
 
 bool PermanentMemory::isSetup() {
-    return this->state == 'T';
+    return this->state == 'T' || this->state == 0xFF;
 }
 
 void PermanentMemory::setSetup(bool value) {
