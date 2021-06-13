@@ -1,6 +1,5 @@
 package hu.schbme.paybasz.station.config;
 
-import hu.schbme.paybasz.station.service.GatewayService;
 import hu.schbme.paybasz.station.service.LoggingService;
 import hu.schbme.paybasz.station.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;

@@ -70,8 +70,8 @@ public class TransactionController {
     }
 
     @PutMapping("/validate/{gatewayName}")
-    public ValidationStatus validate(@PathVariable String gatewayName, @RequestBody String gatewayCode) {
-        boolean valid = gateways.authorizeGateway(gatewayName, gatewayCode);
+    public ValidationStatus validate(@PathVariable String gatewayName, @RequestBody ValidateRequest request) {
+        boolean valid = gateways.authorizeGateway(gatewayName, request.getGatewayCode());
         log.info("Gateways auth request: " + gatewayName + " (" + (valid ? "OK" : "INVALID") + ")");
         if (valid) {
             gateways.updateLastUsed(gatewayName);
@@ -113,7 +113,7 @@ public class TransactionController {
         log.info("Status endpoint triggered from IP: " + request.getRemoteAddr());
         logger.serverInfo("Státusz olvasás a <color>" + request.getRemoteAddr() + "</color> címről");
         return "Server: " + VERSION + ";"
-                + "Original by Schami;" // If you fork it, include your name
+                + "by Schami;" // If you fork it, include your name
                 + "Time:;"
                 + AppUtil.DATE_ONLY_FORMATTER.format(System.currentTimeMillis()) + ";"
                 + AppUtil.TIME_ONLY_FORMATTER.format(System.currentTimeMillis());
