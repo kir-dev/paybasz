@@ -49,7 +49,6 @@ void RfidReader::readCard() {
         Serial.println("[RFID] Bad card (size = 0)");
     } else {
 
-        // FIXME: Ezt szebben
         char tag[sizeof(mfrc522->uid.uidByte) * 4] = { 0 };
         for (int i = 0; i < mfrc522->uid.size; i++) {
             char buff[4]; // 2 hex digits, dash and '\0'
@@ -84,3 +83,38 @@ void RfidReader::startReading(void (*handler)(const char *)) {
 }
 
 void RfidReader::defaultReadHandler(const char *card) { }
+
+bool RfidReader::selfTest() {
+    Serial.println("[RFID] Self testing");
+    return mfrc522->PCD_PerformSelfTest();
+}
+
+void RfidReader::reset() {
+    Serial.println("[RFID] Reset start");
+    mfrc522->PCD_Reset();
+    Serial.println("[RFID] Reset finished");
+}
+
+void RfidReader::reInit() {
+    Serial.println("[RFID] Reinit start");
+    mfrc522->PCD_Init();
+    mfrc522->PCD_DumpVersionToSerial();
+    mfrc522->PCD_SetAntennaGain(mfrc522->RxGain_max);
+    Serial.println("[RFID] Reinit finished");
+}
+
+void RfidReader::setGain(int mode) {
+    Serial.print("[RFID] Setting gain to 3/");
+    Serial.println(mode);
+    switch (mode) {
+        case 1:
+            mfrc522->PCD_SetAntennaGain(mfrc522->RxGain_min);
+            return;
+        case 2:
+            mfrc522->PCD_SetAntennaGain(mfrc522->RxGain_avg);
+            return;
+        case 3:
+            mfrc522->PCD_SetAntennaGain(mfrc522->RxGain_max);
+            return;
+    }
+}

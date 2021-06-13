@@ -2,6 +2,7 @@
 #define PAYBASZ_BOARDPINS_H
 
 #include <stdint.h>
+#include "Firmware.h"
 
 /// -----------------------------------------
 /// NOTE
@@ -23,7 +24,7 @@ constexpr uint8_t PIN_DISPLAY_CS = 15;
 constexpr uint8_t PIN_RFID_RST = 25;
 constexpr uint8_t PIN_RFID_CS = 17;
 
-// Keypad pins: membran switch
+// Keypad pins: membrane switch
 constexpr uint8_t PIN_KEYPAD_COL_1 = 23;
 constexpr uint8_t PIN_KEYPAD_COL_2 = 22;
 constexpr uint8_t PIN_KEYPAD_COL_3 = 21;
@@ -41,6 +42,15 @@ constexpr uint8_t PIN_KEYPAD_ROW_5 = 34;
 
 // Piezo buzzer
 constexpr int32_t PIN_BUZZER = 18;
+
+// RGB LEDs
+constexpr int32_t LED_RED_CHANNEL = 2;
+constexpr int32_t LED_GREEN_CHANNEL = 3;
+constexpr int32_t LED_BLUE_CHANNEL = 4;
+constexpr int32_t LED_PWM_FREQUENCY = 5000;
+constexpr uint8_t PIN_LED_RED = 5;
+constexpr uint8_t PIN_LED_GREEN = 16;
+constexpr uint8_t PIN_LED_BLUE = 4;
 
 /// OTHER CONFIG
 

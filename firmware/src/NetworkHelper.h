@@ -31,6 +31,8 @@ public:
     AccountBalance getAccountBalance(const char * cardHash);
     void proceedPayment(const char * cardHash, uint32_t amount, char * comment);
     void queryItem(const char * item, uint32_t * price);
+    void checkStatus();
+    void validateConnection();
 
     static void setupUrls(char * baseUrl, char * gatewayName, char * token);
 };

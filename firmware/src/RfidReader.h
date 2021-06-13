@@ -28,6 +28,10 @@ public:
     void startReading(void (*handler)(const char *));
     void stopReading();
     static void defaultReadHandler(const char * card);
+    bool selfTest();
+    void reset();
+    void reInit();
+    void setGain(int mode);
 };
 
 

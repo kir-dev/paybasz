@@ -219,7 +219,6 @@ void NetworkHelper::proceedPayment(const char * cardHash, uint32_t amount, char 
             delay(400);
         }
     }
-
 }
 
 void NetworkHelper::queryItem(const char * item, uint32_t * price) {
@@ -271,7 +270,83 @@ void NetworkHelper::queryItem(const char * item, uint32_t * price) {
             delay(400);
         }
     }
-
 }
 
+void NetworkHelper::checkStatus() {
+    Serial.print("[API] Checking status");
 
+    for (int i = 0; i < 25; ++i) {
+        if (wifiMulti.run() == WL_CONNECTED) {
+            HTTPClient http;
+            http.begin(STATUS_URL);
+            int httpResponseCode = http.GET();
+
+            Serial.print("[API] HTTP Response code: ");
+            Serial.println(httpResponseCode);
+            if (httpResponseCode == 200) {
+                Serial.print("[API] OK; payload: ");
+                String payload = http.getString();
+                Serial.println(payload);
+
+                int index1 = payload.indexOf(';', 0);
+                int index2 = payload.indexOf(';', index1 + 1);
+                int index3 = payload.indexOf(';', index2 + 1);
+                int index4 = payload.indexOf(';', index3 + 1);
+                ScreenBase::displayManager->showDebugInfo(DisplayManager::FINE,
+                                                          payload.substring(0, index1).c_str(),
+                                                          payload.substring(index1 + 1, index2).c_str(),
+                                                          payload.substring(index2 + 1, index3).c_str(),
+                                                          payload.substring(index3 + 1, index4).c_str(),
+                                                          payload.substring(index4 + 1).c_str());
+
+            } else if (httpResponseCode < 0) {
+                delay(400);
+                http.end();
+                continue;
+            }
+
+            http.end();
+            return;
+        } else {
+            Serial.println("[API] WiFi Disconnected, retrying");
+            delay(400);
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::ERROR, "WiFi disconnected", "retrying");
+        }
+    }
+}
+
+void NetworkHelper::validateConnection() {
+    Serial.println("[API] Validating connection");
+
+    for (int i = 0; i < 25; ++i) {
+        if (wifiMulti.run() == WL_CONNECTED) {
+            HTTPClient http;
+            http.begin(VALIDATE_URL);
+            http.addHeader("Content-Type", "application/json");
+            char message[64 + 18 + 1];
+            sprintf(message, "{\"gatewayCode\":\"%s\"}", NetworkHelper::TOKEN);
+            int httpResponseCode = http.PUT(message);
+
+            Serial.print("[API] HTTP Response code: ");
+            Serial.println(httpResponseCode);
+            if (httpResponseCode == 200) {
+                Serial.print("[API] OK; payload: ");
+                String payload = http.getString();
+                Serial.println(payload);
+                ScreenBase::displayManager->showDebugInfo(DisplayManager::FINE, "[SERVER]", "Conn. status", payload.c_str());
+
+            } else if (httpResponseCode < 0) {
+                delay(400);
+                http.end();
+                continue;
+            }
+
+            http.end();
+            return;
+        } else {
+            Serial.println("[API] WiFi Disconnected, retrying");
+            delay(400);
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::ERROR, "[SERVER]", "Conn. status", "CAN'T REACH");
+        }
+    }
+}

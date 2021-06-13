@@ -20,6 +20,10 @@ class DisplayManager {
     DisplaySSD1331_96x64x16_CustomSPI<ArduinoSpi3> * display;
 
 public:
+    static const int INFO = 0;
+    static const int FINE = 1;
+    static const int ERROR = 2;
+
     DisplayManager(uint8_t rst, uint8_t dc, uint8_t clk, uint8_t mosi, uint8_t miso, uint8_t cs)
         : DISPLAY_RST(rst), DISPLAY_DC(dc), HSPI_CLK(clk), HSPI_MOSI(mosi), HSPI_MISO(miso), DISPLAY_CS(cs) {};
     void setupDisplay();
@@ -44,6 +48,15 @@ public:
     void updateErrorFlag(char * message);
     void updateConnFlag();
     void setOrientation(bool orientation);
+    void setLedColor(int red, int green, int blue);
+    void turnOffLeds();
+
+    void showDebugInfo(int color);
+    void showDebugInfo(int color, const char * title);
+    void showDebugInfo(int color, const char * title, const char * line2);
+    void showDebugInfo(int color, const char * title, const char * line2, const char * line3);
+    void showDebugInfo(int color, const char * title, const char * line2, const char * line3, const char * line4);
+    void showDebugInfo(int color, const char * title, const char * line2, const char * line3, const char * line4, const char * line5);
 };
 
 #endif //PAYBASZ_DISPLAYMANAGER_H

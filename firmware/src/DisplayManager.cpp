@@ -5,6 +5,7 @@
 #include "ArduinoSpi3.h"
 #include "Branding.h"
 #include "Firmware.h"
+#include "BoardPins.h"
 
 constexpr int DISPLAY_WIDTH = 96;
 
@@ -259,6 +260,7 @@ void DisplayManager::displayDoneStatus() {
     canvas.setColor(RGB_COLOR16(255, 255, 255));
     canvas.printFixed(27, 54, "SIKERES", STYLE_NORMAL);
     display->drawCanvas(0, 0, canvas);
+    this->setLedColor(0, 255, 0);
 }
 
 void DisplayManager::displayFailedStatus(String reason) {
@@ -279,6 +281,7 @@ void DisplayManager::displayFailedStatus(String reason) {
     canvas.setColor(RGB_COLOR16(128, 0, 0));
     canvas.printFixed((DISPLAY_WIDTH - (reason.length() * 6)) / 2, 3, reason.c_str(), STYLE_NORMAL);
     display->drawCanvas(0, 0, canvas);
+    this->setLedColor(255, 0, 0);
 }
 
 void DisplayManager::displayReadingScreen() {
@@ -341,6 +344,7 @@ void DisplayManager::displayReadingScreen(const char* hashedTag) {
     canvas.fillRect(0, 0, 95, 1);
     canvas.fillRect(0, 62, 95, 63);
     display->drawCanvas(0, 0, canvas);
+    this->setLedColor(255, 255, 0);
 }
 
 void DisplayManager::displayReadCardAmountScreen() {
@@ -388,11 +392,14 @@ void DisplayManager::displayCardAmountScreen(int amount, bool loan, bool allow) 
     if (!allow) {
         canvas.setColor(RGB_COLOR16(255, 0, 0));
         canvas.printFixed(21, 56, "LETILTVA!", STYLE_NORMAL);
+        this->setLedColor(255, 0, 0);
     } else if (loan) {
         canvas.setColor(RGB_COLOR16(255, 255, 0));
         canvas.printFixed(12, 56, "HITEL: LEHET", STYLE_NORMAL);
+        this->setLedColor(255, 255, 0);
     } else {
         canvas.setColor(RGB_COLOR16(0, 191, 255));
+        this->setLedColor(0, 255, 255);
     }
 
     canvas.fillRect(0, 16, 1, 49);
@@ -457,15 +464,16 @@ void DisplayManager::displayEmpty() {
 }
 
 void DisplayManager::displayRebootNowScreen() {
-        canvas.clear();
-        canvas.setFixedFont(ssd1306xled_font6x8);
-        canvas.setColor(RGB_COLOR16(255, 0, 0));
-        canvas.drawRect(0, 0, 95, 63);
-        canvas.drawRect(1, 1, 94, 62);
+    canvas.clear();
+    canvas.setFixedFont(ssd1306xled_font6x8);
+    canvas.setColor(RGB_COLOR16(255, 0, 0));
+    canvas.drawRect(0, 0, 95, 63);
+    canvas.drawRect(1, 1, 94, 62);
 
-        canvas.setColor(RGB_COLOR16(255, 255, 255));
-        canvas.printFixed(18, 28, "REBOOT NOW", STYLE_NORMAL);
-        display->drawCanvas(0, 0, canvas);
+    canvas.setColor(RGB_COLOR16(255, 255, 255));
+    canvas.printFixed(18, 28, "REBOOT NOW", STYLE_NORMAL);
+    display->drawCanvas(0, 0, canvas);
+    this->setLedColor(255, 0, 0);
 };
 
 void DisplayManager::updateSyncFlag() {
@@ -486,4 +494,68 @@ void DisplayManager::updateErrorFlag(char * message) {
 
 void DisplayManager::setOrientation(bool orientation) {
     display->getInterface().setRotation(orientation ? 0 : 2);
+}
+
+void DisplayManager::setLedColor(int red, int green, int blue) {
+#if DEVICE_VERSION >= 30
+    ledcWrite(LED_RED_CHANNEL, red);
+    ledcWrite(LED_GREEN_CHANNEL, green);
+    ledcWrite(LED_BLUE_CHANNEL, blue);
+#endif
+}
+
+void DisplayManager::turnOffLeds() {
+#if DEVICE_VERSION >= 30
+    ledcWrite(LED_RED_CHANNEL, 0);
+    ledcWrite(LED_GREEN_CHANNEL, 0);
+    ledcWrite(LED_BLUE_CHANNEL, 0);
+#endif
+}
+
+void DisplayManager::showDebugInfo(int color, const char * title, const char * line2, const char * line3, const char * line4, const char * line5) {
+    canvas.clear();
+    canvas.setFixedFont(ssd1306xled_font6x8);
+    canvas.setColor(RGB_COLOR16(255, 255, 255));
+    canvas.printFixed(6, 5, title, STYLE_NORMAL);
+    canvas.printFixed(6, 26, line3, STYLE_NORMAL);
+    canvas.printFixed(6, 35, line4, STYLE_NORMAL);
+    canvas.printFixed(6, 44, line5, STYLE_NORMAL);
+    canvas.printFixed(66, 55, "[ESC]", STYLE_NORMAL);
+
+    switch (color) {
+        case INFO:
+            canvas.setColor(RGB_COLOR16(0, 255, 255));
+            break;
+        case FINE:
+            canvas.setColor(RGB_COLOR16(0, 255, 0));
+            break;
+        case ERROR:
+            canvas.setColor(RGB_COLOR16(255, 0, 0));
+            break;
+    }
+    canvas.drawRect(0, 0, 3, 63);
+    canvas.drawRect(1, 1, 2, 62);
+    canvas.printFixed(6, 17, line2, STYLE_NORMAL);
+
+    display->drawCanvas(0, 0, canvas);
+}
+
+void DisplayManager::showDebugInfo(int color, const char * title, const char * line2, const char * line3, const char * line4) {
+    this->showDebugInfo(color, title, line2, line3, line4, "");
+}
+
+void DisplayManager::showDebugInfo(int color, const char * title, const char * line2, const char * line3) {
+    this->showDebugInfo(color, title, line2, line3, "", "");
+}
+
+void DisplayManager::showDebugInfo(int color, const char * title, const char * line2) {
+    this->showDebugInfo(color, title, line2, "", "", "");
+}
+
+void DisplayManager::showDebugInfo(int color, const char * title) {
+    this->showDebugInfo(color, title, "", "", "", "");
+}
+
+void DisplayManager::showDebugInfo(int color) {
+    this->showDebugInfo(color, "", "", "", "", "");
 }

@@ -88,7 +88,6 @@ void setup() {
     // Piezo Buzzer
     ledcSetup(BUZZER_CHANNEL, BUZZER_SOUND_HZ, 8);
     ledcAttachPin(PIN_BUZZER, BUZZER_CHANNEL);
-
     bootBeep();
 
     // Serial
@@ -139,6 +138,20 @@ void setup() {
     keypad->setKeyPressListener(ScreenBase::handleKeyEvents);
     ScreenBase::setActiveScreen(INIT_SCREEN_INSTANCE);
     Serial.println("[SETUP] Screens: OK");
+
+    // LEDs
+#if DEVICE_VERSION >= 30
+    pinMode(PIN_LED_RED, OUTPUT);
+    pinMode(PIN_LED_GREEN, OUTPUT);
+    pinMode(PIN_LED_BLUE, OUTPUT);
+
+    ledcSetup(LED_RED_CHANNEL, LED_PWM_FREQUENCY, 8);
+    ledcAttachPin(PIN_LED_RED, LED_RED_CHANNEL);
+    ledcSetup(LED_GREEN_CHANNEL, LED_PWM_FREQUENCY, 8);
+    ledcAttachPin(PIN_LED_GREEN, LED_GREEN_CHANNEL);
+    ledcSetup(LED_BLUE_CHANNEL, LED_PWM_FREQUENCY, 8);
+    ledcAttachPin(PIN_LED_BLUE, LED_BLUE_CHANNEL);
+#endif
 
     // Other
     Serial.println("[SETUP] Setup completed");

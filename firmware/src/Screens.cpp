@@ -29,6 +29,7 @@ void InitScreen::onIdle() {
 
 void MenuScreen::onActivate() {
     ScreenBase::displayManager->displayMenu();
+    ScreenBase::displayManager->turnOffLeds();
     sleepTimeout = 0;
 }
 
@@ -70,6 +71,7 @@ void ReadingScreen::readCardTask(const char * card) {
 
 void ReadingScreen::onActivate() {
     ScreenBase::displayManager->displayReadingScreen();
+    ScreenBase::displayManager->setLedColor(255, 255, 255);
     ScreenBase::rfidReader->startReading(readCardTask);
 }
 
@@ -224,6 +226,7 @@ void PaymentScreen::paymentTask(const char* card) {
 }
 
 void PaymentScreen::onActivate() {
+    ScreenBase::displayManager->setLedColor(255, 255, 255);
     ScreenBase::rfidReader->startReading(paymentTask);
 }
 
@@ -280,6 +283,48 @@ void CommandScreen::onActivate() {
     ScreenBase::displayManager->displayCommandScreen(command, len);
 }
 
+void testLeds() {
+    Serial.println("[TEST] Testing LEDs");
+    ScreenBase::displayManager->setLedColor(255, 0, 0);
+    delay(1000);
+    ScreenBase::displayManager->setLedColor(0, 255, 0);
+    delay(1000);
+    ScreenBase::displayManager->setLedColor(0, 0, 255);
+    delay(1000);
+    ScreenBase::displayManager->setLedColor(255, 255, 0);
+    delay(1000);
+    ScreenBase::displayManager->setLedColor(0, 255, 255);
+    delay(1000);
+    ScreenBase::displayManager->setLedColor(255, 0, 255);
+    delay(1000);
+    ScreenBase::displayManager->setLedColor(255, 255, 255);
+    delay(1000);
+    ScreenBase::displayManager->turnOffLeds();
+    delay(500);
+    Serial.println("[TEST] Test complete");
+    ScreenBase::setActiveScreen(MENU_SCREEN_INSTANCE);
+}
+
+void testRainbowLeds() {
+    Serial.println("[TEST] Testing LEDs");
+    unsigned int rgbColor[3];
+    
+    rgbColor[0] = 255;
+    rgbColor[1] = 0;
+    rgbColor[2] = 0;
+    
+    for (int decColour = 0; decColour < 3; decColour += 1) {
+        int incColour = decColour == 2 ? 0 : decColour + 1;
+        
+        for(int i = 0; i < 255; i += 1) {
+            rgbColor[decColour] -= 1;
+            rgbColor[incColour] += 1;
+            ScreenBase::displayManager->setLedColor(rgbColor[0], rgbColor[1], rgbColor[2]);
+            delay(15);
+        }
+    }
+}
+
 void CommandScreen::onKeyPressEvent(char key) {
     bool changed = false;
 
@@ -287,6 +332,7 @@ void CommandScreen::onKeyPressEvent(char key) {
         ScreenBase::setActiveScreen(MENU_SCREEN_INSTANCE);
         return;
     } else if (key == 'E') {
+        /// Open menus from command
         if (strcmp(command, "*100#") == 0) {
             ScreenBase::setActiveScreen(MENU_SCREEN_INSTANCE);
         } else if (strcmp(command, "*101#") == 0) {
@@ -298,35 +344,123 @@ void CommandScreen::onKeyPressEvent(char key) {
             ScreenBase::setActiveScreen(READING_SCREEN_INSTANCE);
         } else if (strcmp(command, "*104#") == 0) {
             ScreenBase::setActiveScreen(PAY_ADD_ITEM_SCREEN_INSTANCE);
+
+        /// Meant to be locking
+        /// But please don't leave it alone with malicious people
         } else if (strcmp(command, "*400#") == 0) {
-            // TODO: Lock
+
+        /// TURN OF DISPLAY
         } else if (strcmp(command, "*0#") == 0) {
             ScreenBase::setActiveScreen(SLEEP_SCREEN_INSTANCE);
-        } else if (strcmp(command, "*1#") == 0) {
-            // Firmware FIXME-1
+
+        /// Dump firmware info
         } else if (strcmp(command, "*7000#") == 0) {
-            // Conn test FIXME-2
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[FIRMWARE]", "DETAILS", buildVersion, buildDate, ScreenBase::permanentMemory->gatewayName);
+            ScreenBase::setActiveScreen(NO_CHANGE_SCREEN_INSTANCE);
+
+        /// Check server status
         } else if (strcmp(command, "*7001#") == 0) {
-            // Server info (/status endpoint) FIXME-3
+            ScreenBase::networkHelper->checkStatus();
+            ScreenBase::setActiveScreen(NO_CHANGE_SCREEN_INSTANCE);
+
+        /// Check connection and authentication
         } else if (strcmp(command, "*7002#") == 0) {
-            // Gateway info (/validate) FIXME-4
+            ScreenBase::networkHelper->validateConnection();
+            ScreenBase::setActiveScreen(NO_CHANGE_SCREEN_INSTANCE);
+
+        /// Pay 0 JMF: Payment test
         } else if (strcmp(command, "*7003#") == 0) {
-            // 0 jmf transaction FIXME-5
+            paymentTotalAmount = 0;
+            comment[0] = '0';
+            comment[1] = '\0';
+            ScreenBase::setActiveScreen(PAYMENT_SCREEN_INSTANCE);
+            ScreenBase::displayManager->displayPaymentScreen(0);
+
+        /// LED color test
+        } else if (strcmp(command, "*7004#") == 0) {
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[LED]", "Color fade");
+            testLeds();
+            ScreenBase::setActiveScreen(NO_CHANGE_SCREEN_INSTANCE);
+
+        /// PWM LED test
+        } else if (strcmp(command, "*7005#") == 0) {
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[LED]", "Spectrum fade");
+            testRainbowLeds();
+            testRainbowLeds();
+            testRainbowLeds();
+            ScreenBase::displayManager->turnOffLeds();
+            Serial.println("[TEST] Test complete");
+            ScreenBase::setActiveScreen(NO_CHANGE_SCREEN_INSTANCE);
+
+        /// Buzzer self test
+        } else if (strcmp(command, "*7006#") == 0) {
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[Buzzer]", "Self test");
+            ScreenBase::setActiveScreen(BEEP_SCREEN_INSTANCE);
+
+        /// RFID self test
+        } else if (strcmp(command, "*7007#") == 0) {
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[RFID]", "Self test");
+            if (ScreenBase::rfidReader->selfTest()) {
+                Serial.println("[RFID] Self testing: Passed");
+                ScreenBase::displayManager->showDebugInfo(DisplayManager::FINE, "[RFID]", "Self test", "Passed");
+            } else {
+                Serial.println("[RFID] Self testing: Failed");
+                ScreenBase::displayManager->showDebugInfo(DisplayManager::ERROR, "[RFID]", "Self test", "Failed");
+            }
+            ScreenBase::setActiveScreen(NO_CHANGE_SCREEN_INSTANCE);
+
+        /// Reset RFID
+        } else if (strcmp(command, "*8001#") == 0) {
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[RFID]", "RESET: ...");
+            ScreenBase::rfidReader->reset();
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[RFID]", "RESET: DONE");
+            ScreenBase::setActiveScreen(NO_CHANGE_SCREEN_INSTANCE);
+
+        /// Re-init RFID
+        } else if (strcmp(command, "*8002#") == 0) {
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[RFID]", "RE-INIT: ...");
+            ScreenBase::rfidReader->reInit();
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[RFID]", "RE-INIT: DONE");
+            ScreenBase::setActiveScreen(NO_CHANGE_SCREEN_INSTANCE);
+
+        /// RFID set gain [min]
+        } else if (strcmp(command, "*9101#") == 0) {
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[RFID]", "SET GAIN TO:", "MIN (18 dB)");
+            ScreenBase::rfidReader->setGain(1);
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[RFID]", "SET GAIN TO:", "MIN (18 dB)", "DONE");
+            ScreenBase::setActiveScreen(NO_CHANGE_SCREEN_INSTANCE);
+
+        /// RFID set gain [avg]
+        } else if (strcmp(command, "*9102#") == 0) {
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[RFID]", "SET GAIN TO:", "AVG (33 dB)");
+            ScreenBase::rfidReader->setGain(2);
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[RFID]", "SET GAIN TO:", "AVG (33 dB)", "DONE");
+            ScreenBase::setActiveScreen(NO_CHANGE_SCREEN_INSTANCE);
+
+        /// RFID set gain [max:default]
+        } else if (strcmp(command, "*9103#") == 0) {
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[RFID]", "SET GAIN TO:", "MAX (48 dB)");
+            ScreenBase::rfidReader->setGain(3);
+            ScreenBase::displayManager->showDebugInfo(DisplayManager::INFO, "[RFID]", "SET GAIN TO:", "AVG (48 dB)", "DONE");
+            ScreenBase::setActiveScreen(NO_CHANGE_SCREEN_INSTANCE);
+
+        /// Trigger setup mode
         } else if (strcmp(command, "*707172#") == 0) {
             ScreenBase::permanentMemory->setSetup(true);
             ScreenBase::permanentMemory->save();
             ScreenBase::setActiveScreen(REBOOT_NOW_SCREEN);
+
+        /// Factory reset
         } else if (strcmp(command, "*909192#") == 0) {
             ScreenBase::permanentMemory->factoryReset();
             ScreenBase::setActiveScreen(REBOOT_NOW_SCREEN);
+
         } else if (strcmp(command, "*69#") == 0) {
             // Easter egg
         } else if (strcmp(command, "*911#") == 0) {
             // Easter egg
         } else if (strcmp(command, "*420#") == 0) {
             // Easter egg
-        } else if (strcmp(command, "*117#") == 0) {
-            ScreenBase::setActiveScreen(BEEP_SCREEN_INSTANCE);
         } else {
             command[1] = '\0';
             len = 1;
@@ -369,6 +503,7 @@ void BalanceScreen::accountBalanceTask(const char * card) {
 
 void BalanceScreen::onActivate() {
     ScreenBase::displayManager->displayReadingScreen();
+    ScreenBase::displayManager->setLedColor(255, 255, 255);
     ScreenBase::rfidReader->startReading(accountBalanceTask);
 }
 

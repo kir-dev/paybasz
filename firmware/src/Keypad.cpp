@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "Keypad.h"
+#include "Firmware.h"
 
 Keypad::Keypad(unsigned char col1, unsigned char col2, unsigned char col3, unsigned char col4,
                 unsigned char row1, unsigned char row2, unsigned char row3, unsigned char row4, unsigned char row5
