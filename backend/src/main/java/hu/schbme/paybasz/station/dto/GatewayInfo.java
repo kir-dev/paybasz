@@ -1,7 +1,7 @@
 package hu.schbme.paybasz.station.dto;
 
 import hu.schbme.paybasz.station.config.AppUtil;
-import hu.schbme.paybasz.station.model.Gateway.CardReading;
+import hu.schbme.paybasz.station.model.InMemoryGatewayInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -18,12 +18,13 @@ public class GatewayInfo {
     private static final String SECOND = "mp";
     private static final String HOURS = "ó";
 
+    private int id;
     private String name;
     private long lastPacket;
-    private Deque<CardReading> lastReadings;
+    private Deque<InMemoryGatewayInfo.CardReading> lastReadings;
     private long txCount;
     private long allTraffic;
-    private boolean physical;
+    private String type;
 
     @Transient
     public String getLastPacketFormatted() {

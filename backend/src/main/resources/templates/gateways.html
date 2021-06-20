@@ -39,6 +39,14 @@
                     <div class="app-inner-layout__wrapper">
                         <div class="app-inner-layout__content">
                             <div class="tab-content">
+                                <div class="text-center d-block p-3 m-2 mb-3">
+                                    <a class="btn-pill btn-wide fsize-1 btn btn-dark" th:href="@{/admin/create-gateway}">
+                                        <span class="mr-2 opacity-7">
+                                            <i class="icon"><span class="material-icons">memory</span></i>
+                                        </span>
+                                        <span class="mr-1">Terminál Létrehozása</span>
+                                    </a>
+                                </div>
                                 <div class="tab-pane tabs-animation fade show active" id="tab-content-0" role="tabpanel">
                                     <div class="container-fluid">
                                         <div class="row">
@@ -46,12 +54,14 @@
                                             <div class="col-md-12 col-lg-6 col-xl-4" th:each="gw : ${gateways}">
                                                 <div class="card-shadow-primary card-border mb-3 card">
                                                     <div class="dropdown-menu-header">
-                                                        <div th:class="|dropdown-menu-header-inner ${gw.isPhysical() ? 'bg-sunny-morning' : 'bg-dark'}|">
+                                                        <div th:class="|dropdown-menu-header-inner ${gw.getType() == 'physical' ? 'bg-sunny-morning' : (gw.getType() == 'web' ? 'bg-dark' : 'bg-happy-fisher')}|">
                                                             <div class="menu-header-content">
+                                                                <a href="#" th:if="${gw.getType() != 'web'}" th:href="|@{/admin/modify-gateway/}${gw?.getId()}|" class="gateway-edit-button"><span class="material-icons">edit</span></a>
                                                                 <div>
                                                                     <h5 class="menu-header-title" th:text="${gw.getName()}">DevTerminal</h5>
-                                                                    <h6 class="menu-header-subtitle" th:if="${gw.isPhysical()}">FIZIKAI TERMINÁL</h6>
-                                                                    <h6 class="menu-header-subtitle" th:unless="${gw.isPhysical()}">WEBES TERMINÁL</h6>
+                                                                    <h6 class="menu-header-subtitle" th:if="${gw.getType() == 'physical'}">FIZIKAI TERMINÁL</h6>
+                                                                    <h6 class="menu-header-subtitle" th:if="${gw.getType() == 'web'}">WEBES TERMINÁL</h6>
+                                                                    <h6 class="menu-header-subtitle" th:if="${gw.getType() == 'mobile'}">MOBIL TERMINÁL</h6>
                                                                 </div>
                                                             </div>
                                                         </div>

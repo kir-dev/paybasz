@@ -3,15 +3,16 @@ package hu.schbme.paybasz.station.model;
 import hu.schbme.paybasz.station.config.AppUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.beans.Transient;
 import java.util.Deque;
 import java.util.LinkedList;
 
-@Data
-@RequiredArgsConstructor
-public class Gateway {
+@Getter
+@Setter
+public final class InMemoryGatewayInfo {
 
     @Data
     @AllArgsConstructor
@@ -25,10 +26,7 @@ public class Gateway {
         }
     }
 
-    private final String name;
-    private final String token;
     private long lastPacket = -1;
-    private Deque<CardReading> lastReadings = new LinkedList<>();
-    private final boolean physical;
+    private final Deque<CardReading> lastReadings = new LinkedList<>();
 
 }

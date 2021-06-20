@@ -20,7 +20,7 @@ import static hu.schbme.paybasz.station.PaybaszApplication.VERSION;
 @Slf4j
 @RestController
 @RequestMapping("/api")
-public class TransactionController {
+public class ApiController {
 
     @Autowired
     private TransactionService system;

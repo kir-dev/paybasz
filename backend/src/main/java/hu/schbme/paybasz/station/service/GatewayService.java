@@ -1,34 +1,30 @@
 package hu.schbme.paybasz.station.service;
 
+import hu.schbme.paybasz.station.dto.GatewayCreateDto;
 import hu.schbme.paybasz.station.dto.GatewayInfo;
-import hu.schbme.paybasz.station.model.Gateway;
+import hu.schbme.paybasz.station.model.GatewayEntity;
+import hu.schbme.paybasz.station.model.InMemoryGatewayInfo;
 import hu.schbme.paybasz.station.model.TransactionEntity;
+import hu.schbme.paybasz.station.repo.GatewayRepository;
 import hu.schbme.paybasz.station.repo.TransactionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Deque;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.function.Predicate.not;
+import static hu.schbme.paybasz.station.model.GatewayEntity.*;
 
+@SuppressWarnings({"DefaultAnnotationParam", "SpellCheckingInspection"})
 @Slf4j
 @Service
 public class GatewayService {
 
     public static final String WEB_TERMINAL_NAME = "WebTerminal";
-
-    private final ConcurrentMap<String, Gateway> gateways = new ConcurrentHashMap<>();
 
     @Autowired
     private LoggingService logger;
@@ -36,61 +32,106 @@ public class GatewayService {
     @Autowired
     private TransactionRepository transactions;
 
+    @Autowired
+    private GatewayRepository gateways;
+
+    private final Map<String, InMemoryGatewayInfo> gatewayInfo = new HashMap<>();
+
     public List<GatewayInfo> getAllGatewayInfo() {
-        return gateways.values().stream()
-                .map(it -> new GatewayInfo(it.getName(), it.getLastPacket(), it.getLastReadings(),
-                        readTxCount(it), readAllTraffic(it), it.isPhysical()))
+        return gateways.findAll().stream()
+                .map(it -> {
+                    final var gw = getInfo(it.getName());
+                    return new GatewayInfo(it.getId(), it.getName(), gw.getLastPacket(), gw.getLastReadings(),
+                            readTxCount(it), readAllTraffic(it), it.getType());
+                })
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private long readAllTraffic(Gateway gw) {
+    private long readAllTraffic(GatewayEntity gw) {
         return transactions.findAllByGateway(gw.getName()).stream()
                 .mapToInt(TransactionEntity::getAmount)
                 .sum();
     }
 
-    private long readTxCount(Gateway gw) {
+    private long readTxCount(GatewayEntity gw) {
         return transactions.countAllByGateway(gw.getName());
     }
 
-    @Value("${paybasz.gateways.file:config/gateways.csv}")
-    public String configFilePath;
-
     @PostConstruct
     public void init() throws IOException {
-        if (!Files.exists(Path.of(configFilePath))) {
-            Files.createDirectories(new File(configFilePath).getParentFile().toPath());
-            Files.writeString(Path.of(configFilePath), "gatewayName;5e9795e3f3ab55e7790a6283507c085db0d764fc\n");
-            log.info("Default gateways file was created to: " + Path.of(configFilePath).getFileName().toString());
-            return;
+        if (gateways.findByName(WEB_TERMINAL_NAME).isEmpty()) {
+            gateways.save(new GatewayEntity(WEB_TERMINAL_NAME, "", TYPE_WEB));
         }
-        gateways.put(WEB_TERMINAL_NAME, new Gateway(WEB_TERMINAL_NAME, "", false));
-        gateways.putAll(Files.readAllLines(Path.of(configFilePath))
-                .stream()
-                .filter(not(String::isBlank))
-                .map(line -> line.split(";"))
-                .collect(Collectors.toMap(key -> key[0], value -> new Gateway(value[0], value[1], true))));
-
-        gateways.forEach((name, token) -> log.info("Gateway '{}' registered with token: '{}'", name, token));
+        gateways.findAll().forEach(gateway -> log.info("Gateway '{}' of type {} registered with token: '{}'",
+                gateway.getName(), gateway.getType(), gateway.getToken()));
     }
 
     public boolean authorizeGateway(String name, String token) {
-        if (!gateways.containsKey(name) || !gateways.get(name).isPhysical()) {
+        final var gateway = gateways.findByName(name);
+        if (gateway.isEmpty() || TYPE_WEB.equals(gateway.get().getType())) {
             log.warn("Unauthorized gateway '{}' with token '{}'", name, token);
             logger.failure("Nem jogoult terminál: <color>" + name + "</color>");
             return false;
         }
-        return gateways.get(name).getToken().equals(token);
+        return gateway.get().getToken().equals(token);
     }
 
     public void appendReading(String name, String card) {
-        Deque<Gateway.CardReading> cardReadings = gateways.get(name).getLastReadings();
+        final var cardReadings = getInfo(name).getLastReadings();
         if (cardReadings.size() >= 5)
             cardReadings.removeLast();
-        cardReadings.addFirst(new Gateway.CardReading(card, System.currentTimeMillis()));
+        cardReadings.addFirst(new InMemoryGatewayInfo.CardReading(card, System.currentTimeMillis()));
     }
 
     public void updateLastUsed(String name) {
-        gateways.get(name).setLastPacket(System.currentTimeMillis());
+        getInfo(name).setLastPacket(System.currentTimeMillis());
     }
+
+    private InMemoryGatewayInfo getInfo(String name) {
+        return gatewayInfo.computeIfAbsent(formatGatewayName(name), it -> new InMemoryGatewayInfo());
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<GatewayEntity> getGateway(int gatewayId) {
+        return gateways.findById(gatewayId);
+    }
+
+    @Transactional(readOnly = false)
+    public boolean createGateway(GatewayCreateDto gatewayDto) {
+        if (gateways.findByName(formatGatewayName(gatewayDto.getName())).isPresent())
+            return false;
+
+        final var type = List.of(TYPE_PHYSICAL, TYPE_MOBILE, TYPE_WEB)
+                .contains(gatewayDto.getType()) ? gatewayDto.getType() : TYPE_WEB;
+        gateways.save(new GatewayEntity(formatGatewayName(gatewayDto.getName()), gatewayDto.getToken(), type));
+        return true;
+    }
+
+    @Transactional(readOnly = false)
+    public boolean modifyGateway(GatewayCreateDto gatewayDto) {
+        final var gateway = gateways.findById(gatewayDto.getId());
+        final var gatewayName = formatGatewayName(gatewayDto.getName());
+        final var gatewayByName = gateways.findByName(gatewayName);
+        if (gatewayByName.isPresent() && !gatewayDto.getId().equals(gatewayByName.get().getId()))
+            return false;
+
+        gateway.ifPresent(gw -> {
+            gw.setName(gatewayName);
+            gw.setToken(gatewayDto.getToken());
+
+            final var inMemoryGateway = getInfo(gatewayName);
+            gatewayInfo.remove(gatewayName);
+            gatewayInfo.put(gatewayName, inMemoryGateway);
+
+            final var type = List.of(TYPE_PHYSICAL, TYPE_MOBILE, TYPE_WEB)
+                    .contains(gatewayDto.getType()) ? gatewayDto.getType() : TYPE_WEB;
+            gw.setType(type);
+        });
+        return true;
+    }
+
+    private String formatGatewayName(String name) {
+        return name.replace(' ', '-').replaceAll("[^A-Za-z0-9_\\-.]", "");
+    }
+
 }
