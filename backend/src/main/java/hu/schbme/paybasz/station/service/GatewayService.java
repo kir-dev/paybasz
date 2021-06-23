@@ -76,8 +76,8 @@ public class GatewayService {
         return gateway.get().getToken().equals(token);
     }
 
-    public void appendReading(String name, String card) {
-        final var cardReadings = getInfo(name).getLastReadings();
+    public void appendReading(String gatewayName, String card) {
+        final var cardReadings = getInfo(gatewayName).getLastReadings();
         if (cardReadings.size() >= 5)
             cardReadings.removeLast();
         cardReadings.addFirst(new InMemoryGatewayInfo.CardReading(card, System.currentTimeMillis()));

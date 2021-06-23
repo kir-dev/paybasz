@@ -126,7 +126,10 @@
                                                         <h6 class="text-muted text-uppercase font-size-md opacity-5 font-weight-normal">UTOLSÓ BEOLVASÁSOK</h6>
                                                         <div th:each="read : ${gw.getLastReadings()}">
                                                             <span class="text-secondary" th:text="${read.getTimeFormatted()}">2020-11-04&nbsp;10:34:14</span><br />
-                                                            <div class="text-dark" th:text="${read.getCard()}">e908389d4bbf30e8dc72dc47cdf6b45d89e8b2a0</div><br />
+                                                            <a class="btn btn-light pt-1 pb-0 ml-2 float-right" th:href="|@{/}admin/create-account/?card=${read.getCard()}"><span class="material-icons">person_add_alt</span></a>
+                                                            <a class="btn btn-light pt-1 pb-0 ml-2  float-right" th:href="|@{/}admin/assign-to-account/${read.getCard()}"><span class="material-icons">compare_arrows</span></a>
+                                                            <div class="text-dark" th:text="${read.getCard()}">e908389d4bbf30e8dc72dc47cdf6b45d89e8b2a0</div>
+                                                            <div class="mb-3 clear"></div>
                                                         </div>
                                                     </div>
                                                 </div>

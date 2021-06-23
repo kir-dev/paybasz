@@ -1,5 +1,7 @@
 package hu.schbme.paybasz.station.config;
 
+import hu.schbme.paybasz.station.dto.GatewayCreateDto;
+import hu.schbme.paybasz.station.service.GatewayService;
 import hu.schbme.paybasz.station.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,9 @@ public class TestConfig {
 
     @Autowired
     private TransactionService system;
+
+    @Autowired
+    private GatewayService gatewayService;
 
     @PostConstruct
     public void init() {
@@ -33,6 +38,10 @@ public class TestConfig {
         system.createTestItem("Unicum duplicate", "4cl", "304", "Unicum 2", 2640, false);
         system.createTestItem("Unicum duplicate", "8cl", "308", "Unicum 2", 21280, true);
 
+        gatewayService.createGateway(new GatewayCreateDto(0, "Name", "token", "physical"));
+        gatewayService.appendReading("Name", "0123456789012345678901234567890123456789012345678901234567890123");
+        gatewayService.appendReading("Name", "fdgdfsgfdgfdghuwioqbbvjasdzvuhfnbvh4738gz9WVBFKgevjhjkskdfkl01sd");
+        gatewayService.appendReading("Name", "klfnkbaioubdxynjlubiogafgkaljgbas3fdsfsdfhtropw4nfjfvuizao8901ds");
     }
 
 }

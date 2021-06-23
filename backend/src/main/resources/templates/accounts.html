@@ -75,7 +75,7 @@
                                                         <td th:text="${acc.getName()}">Kiss Pista</td>
                                                         <td th:text="${acc.getEmail()}">kisspista@gmail.com</td>
                                                         <td th:text="${acc.getPhone()}">+36307361443</td>
-                                                        <td th:text="${acc.getFormattedCard()}">e908389f</td>
+                                                        <td th:text="${acc.getFormattedCard()}" th:title="${acc.getCard()}">e908389f</td>
                                                         <td th:text="|${-acc.getMinimumBalance()} JMF|">1500 JMF</td>
                                                         <td th:text="|${acc.getBalance()} JMF|">0 JMF</td>
                                                         <td th:text="${acc.isAllowed() ? 'Nem' : 'Igen'}">Igen</td>

@@ -15,8 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -155,7 +154,9 @@ public class TransactionService {
 
     @Transactional(readOnly = true)
     public Iterable<AccountEntity> getAllAccounts() {
-        return accounts.findAll();
+        final var all = accounts.findAll();
+        all.sort(Comparator.comparing(AccountEntity::getName));
+        return all;
     }
 
     @Transactional(readOnly = true)

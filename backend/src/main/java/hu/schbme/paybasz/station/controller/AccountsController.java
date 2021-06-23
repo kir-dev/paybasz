@@ -3,7 +3,6 @@ package hu.schbme.paybasz.station.controller;
 import hu.schbme.paybasz.station.dto.AccountCreateDto;
 import hu.schbme.paybasz.station.dto.PaymentStatus;
 import hu.schbme.paybasz.station.model.AccountEntity;
-import hu.schbme.paybasz.station.service.GatewayService;
 import hu.schbme.paybasz.station.service.LoggingService;
 import hu.schbme.paybasz.station.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
@@ -91,9 +90,12 @@ public class AccountsController {
         model.addAttribute("money", money);
         return "upload-money-done";
     }
+
     @GetMapping("/create-account")
-    public String createUser(Model model) {
-        model.addAttribute("acc", null);
+    public String createUser(Model model, @RequestParam(defaultValue = "") String card) {
+        final var account = new AccountCreateDto();
+        account.setCard(card);
+        model.addAttribute("acc", account);
         model.addAttribute("createMode", true);
         return "account-manipulate";
     }
@@ -112,10 +114,14 @@ public class AccountsController {
     }
 
     @GetMapping("/modify-account/{accountId}")
-    public String modifyAccount(@PathVariable Integer accountId, Model model) {
+    public String modifyAccount(@PathVariable Integer accountId, Model model, @RequestParam(defaultValue = "") String card) {
         Optional<AccountEntity> account = system.getAccount(accountId);
         model.addAttribute("createMode", false);
-        account.ifPresentOrElse(
+        account.map(it -> {
+            if (!card.isBlank())
+                it.setCard(card);
+            return it;
+        }).ifPresentOrElse(
                 acc -> model.addAttribute("acc", acc),
                 () -> model.addAttribute("acc", null));
         return "account-manipulate";
@@ -181,5 +187,11 @@ public class AccountsController {
         return "redirect:/admin/accounts";
     }
 
+    @GetMapping("/assign-to-account/{card}")
+    public String uploadMoneyDone(Model model, @PathVariable String card) {
+        model.addAttribute("card", card);
+        model.addAttribute("accounts", system.getAllAccounts());
+        return "assign-to-account";
+    }
 
 }

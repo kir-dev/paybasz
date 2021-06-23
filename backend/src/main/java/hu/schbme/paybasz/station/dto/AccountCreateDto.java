@@ -16,7 +16,7 @@ public class AccountCreateDto {
     private String email;
     private String phone;
     private String card;
-    private Integer loan;
+    private Integer loan = 0;
     private String comment;
 
     @Transient

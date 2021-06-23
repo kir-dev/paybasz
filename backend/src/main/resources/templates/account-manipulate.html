@@ -24,10 +24,10 @@
             <div class="app-main__inner">
                 <div th:replace="layout :: menuMobile"></div>
                 <div class="app-header mt-lg-5">
-                    <div class="page-title-heading" th:if="${acc == null}">
+                    <div class="page-title-heading" th:if="${acc == null || acc.name == null}">
                         <span class="material-icons fix-material-icons">add_box</span> Felhasználó regisztrálása
                     </div>
-                    <div class="page-title-heading" th:unless="${acc == null}">
+                    <div class="page-title-heading" th:unless="${acc == null || acc.name == null}">
                         <span class="material-icons fix-material-icons">create</span> Felhasználó módosítása
                     </div>
                     <div class="app-header-right">
@@ -47,7 +47,7 @@
                                                 <div class="card-body">
                                                     <h5 class="card-title">Felhasználó</h5>
                                                     <form class="" th:action="|/admin/${createMode ? 'create' : 'modify' }-account|" method="post">
-                                                        <input th:unless="${acc == null}"  type="hidden" name="id" th:value="${acc?.getId()}" />
+                                                        <input th:unless="${acc == null || acc.name == null}" type="hidden" name="id" th:value="${acc?.getId()}" />
                                                         <div class="position-relative form-group"><label for="name" class="">Név</label><input name="name" id="name" th:value="${acc?.getName()}" placeholder="" type="text" class="form-control" autocomplete="off" spellcheck="false"></div>
                                                         <div class="position-relative form-group"><label for="email" class="">Email</label><input name="email" id="email" th:value="${acc?.getEmail()}" placeholder="" type="email" class="form-control" autocomplete="off" spellcheck="false"></div>
                                                         <div class="position-relative form-group"><label for="phone" class="">Telefon</label><input name="phone" id="phone" th:value="${acc?.getPhone()}" placeholder="+36301234567" type="text" class="form-control" autocomplete="off" spellcheck="false"></div>

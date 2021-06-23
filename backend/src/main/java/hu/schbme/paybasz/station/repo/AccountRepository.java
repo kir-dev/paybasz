@@ -10,6 +10,8 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends CrudRepository<AccountEntity, Integer> {
 
+    List<AccountEntity> findAll();
+
     Optional<AccountEntity> findByCard(String card);
 
     List<AccountEntity> findAllByBalanceLessThan(int zero);

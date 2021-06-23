@@ -1,0 +1,91 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head" th:remove="body">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>PayBasz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
+    <link rel="icon" href="favicon.ico">
+
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <link href="/custom-style.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-container app-theme-gray">
+    <div class="app-main">
+        <div th:replace="layout :: menu('accounts')"></div>
+
+        <div class="app-main__outer">
+            <div class="app-main__inner">
+                <div th:replace="layout :: menuMobile"></div>
+                <div class="app-header mt-lg-5">
+                    <div class="page-title-heading">
+                        <span class="material-icons fix-material-icons">compare_arrows</span> Kártya hozzárendelése felhasználóhoz
+                        <div class="page-title-subheading" th:text="${card}"></div>
+                    </div>
+                    <div class="app-header-right">
+
+                    </div>
+                    <div class="app-header-overlay d-none animated fadeIn"></div>
+                </div>
+                <div class="app-inner-layout app-inner-layout-page">
+
+                    <div class="app-inner-layout__wrapper">
+                        <div class="app-inner-layout__content">
+                            <div class="tab-content">
+                                <div class="container-fluid">
+                                    <div class="text-center d-block p-3 m-2">
+                                        <a class="btn-pill btn-wide fsize-1 btn btn-primary" th:href="|@{/admin/create-account/}?card=${card}|">
+                                            <span class="mr-2 opacity-7">
+                                                <i class="icon"><span class="material-icons">person_add</span></i>
+                                            </span>
+                                            <span class="mr-1">Új felhasználó ezzel a kártyával</span>
+                                        </a>
+                                    </div>
+                                    <div class="card mb-3" style="min-width: 920px">
+                                        <div class="card-header-tab card-header">
+                                            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                                                <span class="material-icons header-icon icon-gradient bg-love-kiss">people</span>
+                                                FELHASZNÁLÓK
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                                <table style="width: 100%" class="table table-bordered">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Név</th>
+                                                        <th>Kártya</th>
+                                                        <th width="10%">Hozzárendel</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr th:each="acc : ${accounts}">
+                                                        <td th:text="${acc.getName()}">Kiss Pista</td>
+                                                        <td th:text="${acc.getCard()}">e908389f</td>
+                                                        <td style="text-align: center">
+                                                            <a th:href="|@{/admin/modify-account/}${acc.getId()}/?card=${card}|" class="mb-2 mr-2 btn btn-light" title="Hozzárendel"><span class="material-icons fix-material-icons small-icons">compare_arrows</span></a>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="app-drawer-overlay d-none animated fadeIn"></div>
+<object th:replace="layout :: scripts"></object>
+</body>
+</html>
