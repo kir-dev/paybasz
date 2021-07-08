@@ -95,7 +95,7 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = false)
-    public void createTestAccount(String name, String email, String phone, String card, int amount, int minAmount, boolean allowed) {
+    public void createAccount(String name, String email, String phone, String card, int amount, int minAmount, boolean allowed) {
         card = card.toUpperCase();
         log.info("New user was created with card: " + card);
         logger.note("<badge>" + name + "</badge> regisztrálva");
@@ -103,7 +103,7 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = false)
-    public void createTestItem(String name, String quantity, String code, String abbreviation, int price, boolean active) {
+    public void createItem(String name, String quantity, String code, String abbreviation, int price, boolean active) {
         log.info("New item was created: " + name + " (" + quantity + ") " + price + " JMF");
         logger.note("<badge>" + name + "</badge> termék hozzáadva");
         items.save(new ItemEntity(null, name, quantity, code, abbreviation, price, active));

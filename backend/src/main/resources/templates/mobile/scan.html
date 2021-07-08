@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="../../static/mobile/style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>paybasz mobil terminál</title>
+</head>
+<body onload="onLoaded()">
+
+<div class="menu">
+
+    <h1>Beolvasás</h1>
+
+    <div class="result">
+        <h3 id="scan-name">...</h3>
+        <h4 id="scan-balance"></h4>
+        <h4 id="scan-loan"></h4>
+    </div>
+
+    <a href="/mobile">Vissza</a>
+
+</div>
+
+<script>
+    const gatewayName = "mobile1";
+    const token = "letmein";
+    alert("xd");
+
+    function onLoaded() {
+        document.getElementById('scan-name').innerText = 'NFC indul';
+        try {
+            const ndef = new NDEFReader();
+            ndef.scan();
+
+            ndef.addEventListener("readingerror", () => {
+                document.getElementById('scan-name').innerText = 'Hibás olvasás';
+                document.getElementById('scan-balance').innerText = '';
+                document.getElementById('scan-loan').innerText = '';
+            });
+
+            ndef.addEventListener("reading", ({ message, serialNumber }) => {
+                document.getElementById('scan-name').innerText = serialNumber;
+                document.getElementById('scan-balance').innerText = '';
+                document.getElementById('scan-loan').innerText = '';
+            });
+        } catch (error) {
+            document.getElementById('scan-name').innerText = 'Hiba: ' + error;
+            document.getElementById('scan-balance').innerText = '';
+            document.getElementById('scan-loan').innerText = '';
+        }
+    }
+    onLoaded();
+</script>
+</body>
+</html>

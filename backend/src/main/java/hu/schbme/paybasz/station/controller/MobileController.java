@@ -13,8 +13,22 @@ public class MobileController {
 
     @GetMapping("/")
     public String index() {
-        return "mobile/index";
+        return "mobile/mobile";
     }
 
+    @GetMapping("/pay")
+    public String pay() {
+        return "mobile/pay";
+    }
+
+    @GetMapping("/read")
+    public String read() {
+        return "mobile/read";
+    }
+
+    @GetMapping("/scan")
+    public String scan() {
+        return "mobile/scan";
+    }
 
 }
