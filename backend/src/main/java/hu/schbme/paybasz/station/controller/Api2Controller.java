@@ -22,8 +22,9 @@ import static hu.schbme.paybasz.station.PaybaszApplication.VERSION;
 @SuppressWarnings("SpellCheckingInspection")
 @Slf4j
 @RestController
-@RequestMapping("/api")
-public class ApiController {
+@RequestMapping("/api/v2")
+@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
+public class Api2Controller {
 
     @Autowired
     private TransactionService system;
@@ -56,7 +57,7 @@ public class ApiController {
     /**
      * NOTE: Do not use for transaction purposes. Might be effected by dirty read.
      */
-    @PutMapping("/balance/{gatewayName}")
+    @PostMapping("/balance/{gatewayName}")
     public AccountBalance balance(@PathVariable String gatewayName, @RequestBody BalanceRequest request) {
         if (!gateways.authorizeGateway(gatewayName, request.getGatewayCode()))
             throw new UnauthorizedGateway();
@@ -72,7 +73,7 @@ public class ApiController {
         return accountBalance;
     }
 
-    @PutMapping("/validate/{gatewayName}")
+    @PostMapping("/validate/{gatewayName}")
     public ValidationStatus validate(@PathVariable String gatewayName, @RequestBody ValidateRequest request) {
         boolean valid = gateways.authorizeGateway(gatewayName, request.getGatewayCode());
         log.info("Gateways auth request: " + gatewayName + " (" + (valid ? "OK" : "INVALID") + ")");
@@ -85,7 +86,7 @@ public class ApiController {
         return valid ? ValidationStatus.OK : ValidationStatus.INVALID;
     }
 
-    @PutMapping("/reading/{gatewayName}")
+    @PostMapping("/reading/{gatewayName}")
     public ValidationStatus reading(@PathVariable String gatewayName, @RequestBody ReadingRequest readingRequest) {
         if (!gateways.authorizeGateway(gatewayName, readingRequest.getGatewayCode()))
             return ValidationStatus.INVALID;

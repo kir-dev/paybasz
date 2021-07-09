@@ -1,7 +1,5 @@
 package hu.schbme.paybasz.station.config;
 
-import hu.schbme.paybasz.station.dto.GatewayCreateDto;
-import hu.schbme.paybasz.station.service.GatewayService;
 import hu.schbme.paybasz.station.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

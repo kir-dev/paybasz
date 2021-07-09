@@ -3,11 +3,15 @@ package hu.schbme.paybasz.station.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic()
                 .and().authorizeRequests()
                     .antMatchers("/admin/**").hasRole("ADMIN")
-                    .antMatchers("/api/**", "/images/**", "/logout", "/login", "/login-error", "/").permitAll()
+                    .antMatchers("/api/**", "/api/v2/**", "/images/**", "/logout", "/login", "/login-error", "/").permitAll()
                 .and().formLogin()
                     .loginPage("/login")
                     .failureUrl("/login-error")
@@ -35,6 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().logout()
                     .logoutSuccessUrl("/login")
                 .and()
+                    .cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()).and()
                     .csrf().disable();
     }
 
